@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>tmun.ai 已發表專案儀表板</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: pink sheet — header nav, collapsible pinned dashboard, animated AI hero, tabs (Timeline / 所有公開頁面 / 盤點表), platform sections, footer */
+:root{
+  --bg:#fff0f5; --bg-2:#ffe3ee; --surface:#ffffff; --surface-2:#fff7fa;
+  --ink:#4a1f36; --ink-soft:#8a5a72; --line:#f6cfdf;
+  --rose:#e0507f; --rose-deep:#b8325f; --blush:#f8a9c6; --lilac:#b89ae8; --gold:#e3a645; --mint:#3fb59a;
+  --on-accent:#ffffff;
+  --glow1:#ffd6e6; --glow2:#fde7f0;
+  --hero-a:#fff7fa; --hero-b:#ffe4ef; --hero-c:#f3e6ff;
+  --capsule:rgba(255,255,255,.6);
+  --tint-rose:#ffe0ec; --tint-grey:#f1eef3; --fg-grey:#6e6475;
+  --teach-bg:#e6f6f1; --teach-fg:#20765f;
+  --research-bg:#efe7fd; --research-fg:#6a45b8;
+  --both-bg:#ffe9d6; --both-fg:#99530f;
+  --warn-bg:#fff6e4; --warn-line:#f3d79c; --warn-fg:#8a5a0e;
+  --shadow:rgba(184,50,95,.35);
+  --font-display:"Fraunces","Noto Serif TC",Georgia,serif;
+  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --radius:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1d0e18; --bg-2:#2c1626; --surface:#251320; --surface-2:#2e1828;
+  --ink:#fbe7f0; --ink-soft:#c99db4; --line:#4a2a3d;
+  --rose:#ff6f9e; --rose-deep:#ff9cbf; --blush:#c76a90; --lilac:#b79cf0; --gold:#f0b95c; --mint:#5cc9ad;
+  --on-accent:#2a0c1c;
+  --glow1:#3a1530; --glow2:#2a1124;
+  --hero-a:#2a1222; --hero-b:#351530; --hero-c:#2a1838;
+  --capsule:rgba(255,255,255,.06);
+  --tint-rose:#4a1d33; --tint-grey:#332833; --fg-grey:#c5b6c4;
+  --teach-bg:#173a31; --teach-fg:#8be0c6;
+  --research-bg:#2e2350; --research-fg:#c9b4ff;
+  --both-bg:#43291a; --both-fg:#ffc08a;
+  --warn-bg:#3a2a12; --warn-line:#6d5121; --warn-fg:#ffd58a;
+  --shadow:rgba(0,0,0,.6);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1d0e18; --bg-2:#2c1626; --surface:#251320; --surface-2:#2e1828;
+  --ink:#fbe7f0; --ink-soft:#c99db4; --line:#4a2a3d;
+  --rose:#ff6f9e; --rose-deep:#ff9cbf; --blush:#c76a90; --lilac:#b79cf0; --gold:#f0b95c; --mint:#5cc9ad;
+  --on-accent:#2a0c1c;
+  --glow1:#3a1530; --glow2:#2a1124;
+  --hero-a:#2a1222; --hero-b:#351530; --hero-c:#2a1838;
+  --capsule:rgba(255,255,255,.06);
+  --tint-rose:#4a1d33; --tint-grey:#332833; --fg-grey:#c5b6c4;
+  --teach-bg:#173a31; --teach-fg:#8be0c6;
+  --research-bg:#2e2350; --research-fg:#c9b4ff;
+  --both-bg:#43291a; --both-fg:#ffc08a;
+  --warn-bg:#3a2a12; --warn-line:#6d5121; --warn-fg:#ffd58a;
+  --shadow:rgba(0,0,0,.6);
+  color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;
+  background-image:radial-gradient(1200px 500px at 85% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(900px 400px at -10% 30%,var(--glow2) 0%,transparent 60%)}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--rose-deep)}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px;border-radius:6px}
+button{font-family:inherit}
+
+/* Header */
+.topbar{height:4px;background:linear-gradient(90deg,var(--rose),var(--blush),var(--lilac))}
+header.site{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;border-bottom:1px solid var(--line);position:relative}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:22px;text-decoration:none;color:var(--ink)}
+.mark{width:34px;height:34px;display:grid;place-items:center;color:#fff;font:800 13px var(--font-body);background:linear-gradient(135deg,#e0507f,#b89ae8);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.brand small{display:block;font:500 10.5px var(--font-mono);color:var(--ink-soft);letter-spacing:1px;margin-top:-4px}
+.navside{display:flex;align-items:center;gap:6px}
+nav.main{display:flex;gap:2px}
+nav.main a{padding:6px 12px;border-radius:999px;text-decoration:none;color:var(--ink);font-weight:500;white-space:nowrap}
+nav.main a:hover{background:var(--bg-2)}
+nav.main a small{font:500 10px var(--font-mono);color:var(--ink-soft)}
+.iconbtn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:17px}
+.iconbtn:hover{border-color:var(--rose)}
+.signin{background:var(--ink)!important;color:var(--bg)!important}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 40px -20px var(--shadow);padding:8px;min-width:230px;display:flex;flex-direction:column}
+.menu a{padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);font-weight:500}
+.menu a:hover{background:var(--bg-2)}
+.menu .sep{height:1px;background:var(--line);margin:6px 4px}
+.menu .only-narrow{display:none}
+
+/* Dashboard title */
+.titlerow{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-block:26px 16px;border-bottom:1px solid var(--line)}
+.eyebrow{font:700 12px var(--font-mono);letter-spacing:3px;color:var(--rose-deep)}
+h1{margin:6px 0 0;font-size:clamp(28px,4.6vw,48px);line-height:1.15;font-weight:900;text-wrap:balance}
+h1 .en{font-family:var(--font-display);font-weight:800}
+h1 .zh{color:var(--rose)}
+.meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px;font-size:13px;color:var(--ink-soft)}
+.meta-top{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:1px solid var(--gold);color:var(--warn-fg);font-weight:700;font-size:12px;background:var(--surface)}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.collapse-btn{border:1px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:700;font-size:13px;padding:4px 14px;border-radius:999px;cursor:pointer}
+.meta b{color:var(--ink)}
+
+/* Hero */
+.hero{margin-block:20px;border-radius:28px;overflow:hidden;background:linear-gradient(160deg,var(--hero-a) 0%,var(--hero-b) 45%,var(--hero-c) 100%);border:1px solid var(--line);box-shadow:0 20px 50px -30px var(--shadow)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:8px;padding:28px 28px 0}
+.hero-copy{align-self:center;min-width:0}
+.kicker{font:700 12px var(--font-mono);letter-spacing:3px;color:var(--rose-deep)}
+.hero-copy h2{font-size:clamp(30px,4.4vw,52px);line-height:1.12;margin:10px 0 8px;font-weight:900;text-wrap:balance}
+.hero-copy h2 span{background:linear-gradient(90deg,var(--rose),#c06bd8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-copy p{margin:0;color:var(--ink-soft);max-width:34em}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.tag{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;color:#fff;border:0;cursor:pointer}
+.arc-box{min-width:0}
+.arc-box svg{width:100%;height:auto;display:block}
+.arc-label{font:700 13px var(--font-body);fill:var(--ink)}
+.arc-code{font:500 9px var(--font-mono);fill:var(--rose-deep);letter-spacing:1.5px}
+.spin{transform-origin:400px 300px;animation:spin 40s linear infinite}
+.spin.rev{animation-duration:60s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hex-glow{animation:glow 2.4s ease-in-out infinite;transform-origin:400px 300px}
+@keyframes glow{50%{transform:scale(1.06);opacity:.55}}
+.spoke{stroke-dasharray:4 8;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+.node-pulse{animation:np 2.2s ease-in-out infinite}
+@keyframes np{50%{r:9;opacity:.35}}
+.band{padding:6px 28px 22px}
+.band canvas{width:100%;height:150px;display:block}
+.band-labels{display:flex;justify-content:space-between;gap:8px;font:700 11px var(--font-mono);letter-spacing:2.5px;color:var(--rose-deep)}
+.band-labels span:nth-child(2){color:var(--ink-soft)}
+
+/* Controls */
+.unitrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 16px;font-size:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;font:700 13px var(--font-body);color:var(--ink-soft);padding:5px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--rose);color:var(--on-accent)}
+.muted{color:var(--ink-soft)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi h3{margin:0;font-size:14px;font-weight:700;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kpi .num{font:800 46px/1.05 var(--font-display);color:var(--rose);font-variant-numeric:tabular-nums;margin-top:6px}
+.kpi .num small{font:700 14px var(--font-body);color:var(--ink)}
+.kpi .sub{font-size:12.5px;color:var(--ink-soft)}
+.kpi .sub b{color:var(--ink)}
+.kpi.dashed{border-style:dashed}
+.kpi.warn{border-color:var(--gold);background:linear-gradient(180deg,var(--surface),var(--warn-bg))}
+.kpi.warn .num{color:var(--gold)}
+.chip{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--bg-2);color:var(--rose-deep)}
+.kpi.warn .chip{background:var(--warn-bg);color:var(--warn-fg);border:1px solid var(--warn-line)}
+.kpi .link{margin-top:auto;padding:8px 0 0;border:0;border-top:1px dashed var(--line);font-size:12.5px;font-weight:700;color:var(--rose-deep);background:none;text-align:left;cursor:pointer}
+.kpi.warn .link{color:var(--warn-fg)}
+.coverage{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center}
+.coverage h3{margin:0 0 6px;font-size:15px;letter-spacing:2px;color:var(--rose-deep)}
+.coverage p{margin:0}
+.bar{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--bg-2);gap:2px}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-top:28px;border-bottom:2px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;font:700 16px var(--font-body);color:var(--ink-soft);padding:12px 18px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--rose)}
+.datebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-block:14px 0;font-size:14px}
+.datebar input,.filters input,.filters select{font:500 14px var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;max-width:100%}
+.panel{padding-block:16px 10px}
+
+/* Inventory */
+.inv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.inv-head h2,.sec h2{margin:0;font-size:22px}
+.inv-head p{margin:2px 0 0;font-size:13px}
+.notice{display:flex;gap:10px;align-items:flex-start;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-fg);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:12px}
+.notice code{font-family:var(--font-mono)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters input{width:220px}
+.btn{font:700 13px var(--font-body);border-radius:10px;padding:8px 14px;cursor:pointer;border:1px solid var(--rose);background:var(--surface);color:var(--rose-deep)}
+.table-scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;min-width:1040px;font-size:14px}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--bg-2);font-size:13px;color:var(--rose-deep);white-space:nowrap}
+tbody tr:hover{background:var(--surface-2)}
+td .name{font-weight:700}
+.no{font:500 11px var(--font-mono);color:var(--ink-soft)}
+.ai-yes,.ai-no{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.ai-yes{background:var(--tint-rose);color:var(--rose-deep)}
+.ai-yes::before{content:"";width:7px;height:7px;background:var(--rose);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.ai-no{background:var(--tint-grey);color:var(--fg-grey)}
+.use{display:inline-block;padding:2px 10px;border-radius:6px;font-size:12px;font-weight:700;white-space:nowrap}
+.use.teach{background:var(--teach-bg);color:var(--teach-fg)}
+.use.research{background:var(--research-bg);color:var(--research-fg)}
+.use.both{background:var(--both-bg);color:var(--both-fg)}
+.use.todo{background:var(--warn-bg);color:var(--warn-fg)}
+td a,.card a.url{font:500 12.5px var(--font-mono);word-break:break-all}
+.aud{display:flex;flex-wrap:wrap;gap:4px}
+.aud span{font-size:12px;padding:1px 8px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+.cat{font-size:12px;font-weight:700;white-space:nowrap}
+.empty{padding:28px;text-align:center;color:var(--ink-soft)}
+.copy-out{width:100%;margin-top:10px;font:12px var(--font-mono);min-height:120px;border-radius:10px;border:1px solid var(--line);padding:10px;background:var(--surface);color:var(--ink)}
+
+/* Timeline */
+.tl{list-style:none;margin:0;padding:0 0 0 22px;border-left:2px solid var(--blush);display:flex;flex-direction:column;gap:14px}
+.tl li{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center}
+.tl li::before{content:"";position:absolute;left:-31px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:3px solid var(--rose)}
+.tl time{font:500 12px var(--font-mono);color:var(--rose-deep)}
+.tl h4{margin:2px 0;font-size:16px}
+.tl .info{font-size:13px;color:var(--ink-soft)}
+.thumb{width:100%;aspect-ratio:16/10;border-radius:10px;display:block;max-width:100%}
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.card .thumb{border-radius:0}
+.card .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h4{margin:0;font-size:16px}
+.card .by{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--ink-soft)}
+.card .views{font:500 12px var(--font-mono);color:var(--rose-deep);white-space:nowrap}
+.card .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+
+/* Platform sections */
+.sec{margin-top:40px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:16px}
+.sec > p{margin:4px 0 16px;color:var(--ink-soft);max-width:60em}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-width:0}
+.box h3{margin:0 0 10px;font-size:16px}
+.deflist{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:0;font-size:14px}
+.deflist dt{font-weight:700;color:var(--rose-deep);white-space:nowrap}
+.deflist dd{margin:0;color:var(--ink)}
+.cats{display:flex;flex-direction:column;gap:10px}
+.cats .c{display:grid;grid-template-columns:150px minmax(0,1fr) 36px;gap:10px;align-items:center;font-size:14px}
+.cats .c .t{font-weight:700}
+.cats .meter{height:10px;border-radius:999px;background:var(--bg-2);overflow:hidden}
+.cats .meter i{display:block;height:100%;border-radius:999px}
+.cats .c .n{font:500 13px var(--font-mono);text-align:right}
+.cats .c .ex{grid-column:1/-1;margin-top:-6px;font-size:12.5px;color:var(--ink-soft)}
+.feat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.feat .box h3{display:flex;gap:8px;align-items:center;font-size:15px;margin-bottom:4px}
+.feat .box p{margin:0;font-size:13px;color:var(--ink-soft)}
+.ico{width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:8px;background:var(--tint-rose);color:var(--rose-deep);font:800 12px var(--font-mono)}
+.policy{margin-top:14px;font-size:13.5px;background:var(--surface);border:1px dashed var(--rose);border-radius:12px;padding:10px 14px}
+.store{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.store ul{margin:0;padding-left:18px;font-size:13.5px}
+.store .box h3{font-size:15px}
+.store .box h3 small{display:block;font:500 10px var(--font-mono);color:var(--ink-soft);letter-spacing:1.5px}
+
+/* Modal */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(30,10,22,.45);display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);color:var(--ink);border-radius:20px;border:1px solid var(--line);max-width:400px;width:100%;padding:22px}
+.modal h3{margin:0 0 6px}
+.modal label{display:block;font-size:13px;margin-top:12px;font-weight:700}
+.modal input{width:100%;font:500 14px var(--font-body);padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.btn.solid{background:var(--rose);color:var(--on-accent)}
+.modal .msg{font-size:13px;color:var(--rose-deep);margin-top:10px}
+
+footer{margin-top:40px;border-top:1px solid var(--line);padding-block:22px 40px;font-size:13px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer nav{display:flex;gap:16px;flex-wrap:wrap}
+footer a{color:var(--ink);text-decoration:none;font-weight:500}
+footer a:hover{color:var(--rose-deep)}
+
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.feat{grid-template-columns:repeat(2,minmax(0,1fr))}.store{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:860px){
+  nav.main{display:none}
+  .menu .only-narrow{display:block}
+  .hero-grid{grid-template-columns:1fr;padding:22px 18px 0}
+  .band{padding:6px 18px 18px}
+  .coverage,.grid2{grid-template-columns:1fr}
+  .meta{align-items:flex-start}.meta-top{justify-content:flex-start}
+  .store{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi .num{font-size:36px}
+  .band canvas{height:110px}
+  .band-labels{font-size:9px;letter-spacing:1px}
+  .feat,.store{grid-template-columns:1fr}
+  .tl li{grid-template-columns:96px minmax(0,1fr);gap:10px}
+  .cats .c{grid-template-columns:110px minmax(0,1fr) 30px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body style="margin:0">
+
+<div class="topbar"></div>
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#timeline" aria-label="tmun.ai 首頁"><span class="mark">AI</span><span>tmun.ai<small>NURSING · EDU · AI</small></span></a>
+    <div class="navside">
+      <nav class="main" aria-label="主選單">
+        <a href="#store">Store</a>
+        <a href="#about">About</a>
+        <a href="https://line.tmun.ai" target="_blank" rel="noopener">LINE Bot <small>line.tmun.ai</small></a>
+        <a href="#signin" class="signin" data-signin>Sign in</a>
+      </nav>
+      <button class="iconbtn" type="button" id="themeBtn" aria-label="切換深色模式" title="切換深色模式">☾</button>
+      <button class="iconbtn" type="button" id="menuBtn" aria-label="開啟選單" aria-expanded="false" aria-controls="menu">☰</button>
+      <div class="menu" id="menu" hidden>
+        <a class="only-narrow" href="#store">Store</a>
+        <a class="only-narrow" href="#about">About</a>
+        <a class="only-narrow" href="https://line.tmun.ai" target="_blank" rel="noopener">LINE Bot（line.tmun.ai）</a>
+        <a class="only-narrow" href="#signin" data-signin>Sign in</a>
+        <div class="sep only-narrow"></div>
+        <a href="#timeline">Timeline 首頁時間軸</a>
+        <a href="#pages">所有公開頁面</a>
+        <a href="#inventory">全站功能盤點表</a>
+        <a href="#features">AI 與技術功能</a>
+        <div class="sep"></div>
+        <a href="https://tmun.ai/privacy" target="_blank" rel="noopener">隱私權政策</a>
+        <a href="https://tmun.ai/terms" target="_blank" rel="noopener">服務條款</a>
+        <a href="https://tmun.ai/llms.txt" target="_blank" rel="noopener">llms.txt</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 置頂：已發表專案儀表板 -->
+  <section class="titlerow">
+    <div>
+      <div class="eyebrow">TMUN.AI · 管理儀表板</div>
+      <h1><span class="en">tmun.ai</span> <span class="zh">已發表專案儀表板</span></h1>
+    </div>
+    <div class="meta">
+      <div class="meta-top">
+        <span class="pill"><span class="dot"></span>目前為範例資料</span>
+        <button class="collapse-btn" type="button" id="collapseBtn" aria-expanded="true" aria-controls="dashBody">收起 ▲</button>
+      </div>
+      <span>資料截至 <b>2026-11-22</b> ・ 網址 <b>tmun.ai</b></span>
+    </div>
+  </section>
+
+  <div id="dashBody">
+    <section class="hero" aria-label="AI 動態主視覺">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="kicker">NURSING EDUCATION × AI</div>
+          <h2>護理教育<br><span>AI 平台規劃</span></h2>
+          <p>以 AI 輔助建立、發表及展示網頁應用程式。從研究端的資料與知識，經過 AI 轉譯，送到臨床床邊與教室。</p>
+          <div class="tags" id="heroTags"></div>
+        </div>
+        <div class="arc-box">
+          <svg viewBox="0 0 800 440" role="img" aria-label="中央 AI 晶片連結七個主題分類的動態圖">
+            <defs>
+              <linearGradient id="arcG" x1="0" x2="1"><stop offset="0" stop-color="#f8a9c6"/><stop offset=".5" stop-color="#e0507f"/><stop offset="1" stop-color="#b89ae8"/></linearGradient>
+              <linearGradient id="hexG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f06a98"/><stop offset="1" stop-color="#a86ee0"/></linearGradient>
+              <radialGradient id="halo"><stop offset="0" stop-color="#ff9cc2" stop-opacity=".7"/><stop offset="1" stop-color="#ff9cc2" stop-opacity="0"/></radialGradient>
+              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+            </defs>
+            <circle cx="400" cy="300" r="120" fill="url(#halo)"/>
+            <g class="spin"><circle cx="400" cy="300" r="150" fill="none" stroke="#e0507f" stroke-opacity=".35" stroke-dasharray="2 10"/></g>
+            <g class="spin rev"><circle cx="400" cy="300" r="205" fill="none" stroke="#b89ae8" stroke-opacity=".45" stroke-dasharray="14 18"/></g>
+            <circle cx="400" cy="300" r="95" fill="none" stroke="#e0507f" stroke-opacity=".25"/>
+            <path id="mainArc" d="M 90 420 A 310 310 0 0 1 710 420" fill="none" stroke="url(#arcG)" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 90 420 A 310 310 0 0 1 710 420" fill="none" stroke="url(#arcG)" stroke-width="12" stroke-opacity=".25" filter="url(#soft)"/>
+            <g id="spokes"></g>
+            <g id="nodes"></g>
+            <circle r="7" fill="#fff" stroke="#e0507f" stroke-width="3"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#mainArc"/></animateMotion></circle>
+            <circle r="16" fill="#ff8fb8" opacity=".35" filter="url(#soft)"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#mainArc"/></animateMotion></circle>
+            <polygon class="hex-glow" points="400,228 462,264 462,336 400,372 338,336 338,264" fill="#ff9cc2" opacity=".4" filter="url(#soft)"/>
+            <polygon points="400,236 455,268 455,332 400,364 345,332 345,268" fill="url(#hexG)" stroke="#fff" stroke-width="3"/>
+            <text x="400" y="314" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="800" font-size="42" fill="#fff">AI</text>
+            <text x="400" y="404" text-anchor="middle" class="arc-code" font-size="11">NURSING · TRANSLATIONAL · INTELLIGENCE</text>
+          </svg>
+        </div>
+      </div>
+      <div class="band">
+        <canvas id="bandCanvas" aria-label="DNA 轉為資料粒子，經 AI 處理後成為心電圖與心跳的動畫"></canvas>
+        <div class="band-labels"><span>研究端 · BENCH</span><span>AI 轉譯</span><span>臨床端 · BEDSIDE</span></div>
+      </div>
+    </section>
+
+    <div class="unitrow">
+      <strong>計算單位</strong>
+      <div class="seg" role="group" aria-label="計算單位">
+        <button type="button" id="unitWork" aria-pressed="true">依作品計</button>
+        <button type="button" id="unitProj" aria-pressed="false">依作者計</button>
+      </div>
+      <span class="muted" id="unitHint">每個公開頁面算 1 件</span>
+    </div>
+
+    <section class="kpis" aria-label="關鍵指標">
+      <article class="kpi"><h3>公開作品</h3><div class="num" id="kWorks">0</div><div class="sub" id="kWorksSub"></div></article>
+      <article class="kpi"><h3>發表帳號</h3><div class="num" id="kAuthors">0</div><div class="sub" id="kAuthorsSub"></div></article>
+      <article class="kpi"><h3>本月新上架</h3><div class="num" id="kNew">0</div><div class="sub" id="kNewSub"></div>
+        <button class="link" type="button" id="jumpMonth">只看本月新作品 →</button></article>
+      <article class="kpi"><h3>作品瀏覽中位數</h3><div class="num" id="kMedian">0</div><div class="sub" id="kMedianSub"></div></article>
+      <article class="kpi dashed"><h3>已展示教室 <span class="chip">手動 · 11-17</span></h3><div class="num"><small>至少 </small><span id="kRooms">0</span><small> 間</small></div><div class="sub" id="kRoomsSub"></div></article>
+      <article class="kpi warn"><h3>待分類 <span class="chip">需處理</span></h3><div class="num" id="kTodo">0</div><div class="sub">用途尚未標記為研究或教學</div>
+        <button class="link" type="button" id="jumpTodo">篩選待分類作品 →</button></article>
+    </section>
+
+    <section class="coverage" aria-label="平台涵蓋率">
+      <div><h3>平台涵蓋率</h3><p id="covText"></p></div>
+      <div><div class="bar" id="covBar"></div><div class="legend" id="covLegend"></div></div>
+    </section>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="檢視方式">
+    <button role="tab" id="tab-timeline" aria-controls="timeline" aria-selected="true">Timeline</button>
+    <button role="tab" id="tab-pages" aria-controls="pages" aria-selected="false">所有公開頁面</button>
+    <button role="tab" id="tab-inventory" aria-controls="inventory" aria-selected="false">全站功能盤點表</button>
+  </div>
+
+  <div class="datebar" aria-label="依日期篩選">
+    <strong>依日期篩選</strong>
+    <div class="seg" role="group" aria-label="快速日期">
+      <button type="button" data-range="all" aria-pressed="true">全部</button>
+      <button type="button" data-range="7" aria-pressed="false">近 7 天</button>
+      <button type="button" data-range="month" aria-pressed="false">本月</button>
+      <button type="button" data-range="30" aria-pressed="false">近 30 天</button>
+    </div>
+    <label for="dFrom">從</label><input type="date" id="dFrom">
+    <label for="dTo">到</label><input type="date" id="dTo">
+    <span class="muted" id="dateCount"></span>
+  </div>
+
+  <section class="panel" id="timeline" role="tabpanel" aria-labelledby="tab-timeline">
+    <ol class="tl" id="tlList"></ol>
+  </section>
+
+  <section class="panel" id="pages" role="tabpanel" aria-labelledby="tab-pages" hidden>
+    <div class="cards" id="cardGrid"></div>
+  </section>
+
+  <section class="panel" id="inventory" role="tabpanel" aria-labelledby="tab-inventory" hidden>
+    <div class="inv-head">
+      <div>
+        <h2>tmun.ai 全站功能盤點表</h2>
+        <p class="muted">逐一整理公開專案，作為護理教育 AI 平台的規劃依據。目前顯示 <b id="invCount">0</b> 筆</p>
+      </div>
+      <div class="filters">
+        <input id="q" type="search" placeholder="搜尋專案、作者、功能…" aria-label="搜尋">
+        <select id="fCat" aria-label="主題分類篩選"><option value="">分類：全部</option></select>
+        <select id="fAI" aria-label="AI 功能篩選"><option value="">AI 功能：全部</option><option value="有">有 AI 功能</option><option value="無">無 AI 功能</option></select>
+        <select id="fUse" aria-label="用途篩選"><option value="">用途：全部</option><option>教學</option><option>研究</option><option>研究＋教學</option><option>待分類</option></select>
+        <button class="btn" type="button" id="copyCsv">複製為 CSV</button>
+      </div>
+    </div>
+    <div class="notice">⚠︎ <span>表格內容為<b>範例資料</b>，依 tmun.ai 公開專案的主題分類編寫，尚未對應真實作品與作者。換成真實資料時，只要修改頁面原始碼中 <code>PROJECTS</code> 陣列，統計卡、時間軸、作品卡與分類圖都會自動更新。</span></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>專案名稱</th><th>作者</th><th>功能</th><th>使用對象</th><th>是否具有 AI 功能</th><th>研究或教學用途</th><th>網站連結</th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+    <textarea class="copy-out" id="csvOut" hidden readonly aria-label="CSV 內容"></textarea>
+  </section>
+
+  <!-- About -->
+  <section class="sec" id="about">
+    <div class="kicker">ABOUT</div>
+    <h2>平台介紹</h2>
+    <p>tmun.ai 是以 AI 輔助建立、發表及展示網頁應用程式的平台。核心定位是「AI 輔助網頁開發＋醫學教育應用＋互動教學平台＋作品發布」，內容涵蓋醫學教育、臨床訓練、藥事管理、護理行政、研究統計、互動學習及 AI 教學工具等領域。</p>
+    <div class="grid2">
+      <div class="box">
+        <h3>網站主要功能架構</h3>
+        <dl class="deflist">
+          <dt>Timeline</dt><dd>依照日期顯示已發表的專案（首頁時間軸）</dd>
+          <dt>所有公開頁面</dt><dd>瀏覽平台上公開的作品，附縮圖、作者與瀏覽次數</dd>
+          <dt>Store</dt><dd>提供 AI agent 使用的技能與應用程式配方</dd>
+          <dt>About</dt><dd>平台介紹</dd>
+          <dt>LINE Bot</dt><dd>LINE 機器人服務入口（line.tmun.ai）</dd>
+          <dt>Sign in</dt><dd>使用者登入（邀請制）</dd>
+          <dt>已發表專案儀表板</dt><dd>置頂展示公開專案、作者及瀏覽次數，可展開或收合</dd>
+          <dt>創作者作品集</dt><dd>展示個人建立的網頁作品</dd>
+        </dl>
+      </div>
+      <div class="box">
+        <h3>公開專案的主題分類 <span class="muted" style="font-size:12px;font-weight:500">（依範例資料計算）</span></h3>
+        <div class="cats" id="catList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI 與技術功能 -->
+  <section class="sec" id="features">
+    <div class="kicker">AI & TECH</div>
+    <h2>平台提供的 AI 與技術功能</h2>
+    <p>以下為平台支援的能力，可作為護理教育 AI 平台功能規劃的對照清單。</p>
+    <div class="feat">
+      <div class="box"><h3><span class="ico">10</span>單頁 HTML 託管</h3><p>上傳不超過 10 MB 的 HTML 網頁</p></div>
+      <div class="box"><h3><span class="ico">AI</span>Claude AI 協作</h3><p>使用 Claude Cowork、Design、Code 進行開發與發布</p></div>
+      <div class="box"><h3><span class="ico">≋</span>AI 對話代理</h3><p>在網頁中嵌入 AI 對話功能</p></div>
+      <div class="box"><h3><span class="ico">⇄</span>即時多人互動</h3><p>多人連線、游標同步、遊戲訊息</p></div>
+      <div class="box"><h3><span class="ico">⌂</span>線上教室</h3><p>學生登入、提交資料、同儕互看</p></div>
+      <div class="box"><h3><span class="ico">♪</span>AI 多媒體</h3><p>網站介紹文字、語音、生圖、生影片、生音樂</p></div>
+      <div class="box"><h3><span class="ico">Rx</span>醫學文獻檢索</h3><p>支援研究與醫學文獻相關應用</p></div>
+      <div class="box"><h3><span class="ico">API</span>API 發布</h3><p>由 AI agent 呼叫 API 上傳及更新網頁</p></div>
+    </div>
+    <div class="policy"><b>平台採邀請制</b>，不提供傳統站內網頁編輯器，主要由 AI agent 建立及更新內容。</div>
+  </section>
+
+  <!-- Store -->
+  <section class="sec" id="store">
+    <div class="kicker">STORE</div>
+    <h2>Store 技能與工具</h2>
+    <p>提供可供 AI agent 使用的技能與應用程式配方。</p>
+    <div class="store">
+      <div class="box"><h3><small>RESEARCH</small>學術研究</h3><ul><li>深度文獻研究</li><li>研究方向發掘</li><li>學術論文寫作</li></ul></div>
+      <div class="box"><h3><small>TEACHING</small>教學設計</h3><ul><li>建立班級</li><li>學生測驗與回饋頁面</li><li>簡報製作</li></ul></div>
+      <div class="box"><h3><small>DATA</small>資料分析</h3><ul><li>Excel 互動儀表板</li><li>Google Sheets 即時儀表板</li></ul></div>
+      <div class="box"><h3><small>ADMIN</small>行政工具</h3><ul><li>公文撰寫</li><li>內部系統搜尋工具</li></ul></div>
+      <div class="box"><h3><small>OTHER</small>其他技術</h3><ul><li>網頁設計</li><li>本機語音轉文字</li><li>雙語簡報提詞機</li></ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 tmun.ai ・ 護理教育 AI 平台規劃 ・ 範例資料僅供版面展示</span>
+    <nav aria-label="頁尾">
+      <a href="https://tmun.ai/privacy" target="_blank" rel="noopener">隱私權政策</a>
+      <a href="https://tmun.ai/terms" target="_blank" rel="noopener">服務條款</a>
+      <a href="https://tmun.ai/llms.txt" target="_blank" rel="noopener">llms.txt</a>
+    </nav>
+  </footer>
+</div>
+
+<div class="overlay" id="signinBox" hidden>
+  <form class="modal" id="signinForm" aria-labelledby="siTitle">
+    <h3 id="siTitle">登入 tmun.ai</h3>
+    <div class="muted" style="font-size:13px">平台採邀請制，請使用受邀的帳號登入。</div>
+    <label for="siEmail">電子郵件</label><input id="siEmail" type="email" autocomplete="off" placeholder="name@example.edu.tw">
+    <div class="msg" id="siMsg" hidden>這是版面示意，尚未連接登入系統。</div>
+    <div class="acts"><button class="btn" type="button" id="siClose">關閉</button><button class="btn solid" type="submit">寄送登入連結</button></div>
+  </form>
+</div>
+
+<script>
+/* ============================================================
+   ★ 範例資料：請在這裡修改成 tmun.ai 真實公開專案 ★
+   name 專案名稱 / author 作者 / cat 主題分類 / feature 功能 / audience 使用對象
+   ai "有"/"無" / use "教學"/"研究"/"研究＋教學"/"待分類" / url 網站連結
+   date 上架日期 / views 瀏覽次數 / access "公開"/"會員限定"/"教室" / rooms 已展示教室數
+   ============================================================ */
+const CATS = {
+  "醫學教育與臨床訓練":"#e0507f",
+  "護理教育":"#c06bd8",
+  "互動學習與遊戲":"#3fb59a",
+  "AI 反思鷹架":"#8f7ae0",
+  "糖尿病衛教":"#e3a645",
+  "AI 協作教案":"#f06a98",
+  "藥事管理":"#4b9ce0",
+  "研究統計":"#7b6f8c",
+};
+const PROJECTS = [
+  {name:"PGY 臨床工作坊平台", author:"林醫師（範例）", cat:"醫學教育與臨床訓練", feature:"工作坊報名、課程講義與課後回饋表單", audience:["PGY 醫師","臨床教師"], ai:"無", use:"教學", url:"https://tmun.ai/p/pgy-workshop", date:"2026-11-03", views:612, access:"公開", rooms:4},
+  {name:"CBME 里程碑評量儀表板", author:"黃老師（範例）", cat:"醫學教育與臨床訓練", feature:"依能力導向醫學教育（CBME）里程碑追蹤學員進度", audience:["臨床教師","教學部"], ai:"有", use:"研究＋教學", url:"https://tmun.ai/p/cbme-milestone", date:"2026-10-24", views:338, access:"會員限定", rooms:3},
+  {name:"醫病溝通 AI 對練", author:"陳老師（範例）", cat:"醫學教育與臨床訓練", feature:"與 AI 扮演的病人練習告知壞消息與共享決策", audience:["UGY 醫學生","PGY 醫師"], ai:"有", use:"教學", url:"https://tmun.ai/p/sp-communication", date:"2026-11-19", views:874, access:"公開", rooms:6},
+  {name:"AI 虛擬病人：護理評估", author:"王老師（範例）", cat:"護理教育", feature:"與 AI 虛擬病人問診，練習護理評估與 SBAR 交班", audience:["護理系學生"], ai:"有", use:"教學", url:"https://tmun.ai/p/vp-nursing", date:"2026-11-12", views:1046, access:"公開", rooms:9},
+  {name:"ADPIE 護理決策訓練", author:"張老師（範例）", cat:"護理教育", feature:"依評估、診斷、計畫、執行、評值五步驟練習臨床推理，AI 即時回饋", audience:["護理系學生","新進護理師"], ai:"有", use:"教學", url:"https://tmun.ai/p/adpie", date:"2026-11-07", views:533, access:"公開", rooms:5},
+  {name:"產科護理學互動教材", author:"蔡老師（範例）", cat:"護理教育", feature:"產程進展圖、胎心音判讀與情境題", audience:["護理系學生"], ai:"無", use:"教學", url:"https://tmun.ai/p/ob-nursing", date:"2026-10-18", views:402, access:"教室", rooms:2},
+  {name:"行政護理學排班模擬", author:"李護理長（範例）", cat:"護理教育", feature:"模擬病房人力配置與排班規則檢核", audience:["護理行政主管","護理系學生"], ai:"無", use:"待分類", url:"https://tmun.ai/p/nursing-admin", date:"2026-11-20", views:121, access:"會員限定", rooms:1},
+  {name:"照護情境遊戲地圖", author:"吳老師（範例）", cat:"互動學習與遊戲", feature:"多人連線闖關，在病房地圖中完成照護任務", audience:["護理系學生","醫學生"], ai:"無", use:"教學", url:"https://tmun.ai/p/care-map", date:"2026-11-15", views:689, access:"公開", rooms:7},
+  {name:"SEL 照護反思卡", author:"許老師（範例）", cat:"互動學習與遊戲", feature:"社會情緒學習（SEL）情境卡與小組反思", audience:["護理系學生"], ai:"無", use:"待分類", url:"https://tmun.ai/p/sel-cards", date:"2026-10-29", views:187, access:"公開", rooms:2},
+  {name:"AI 反思鷹架日誌", author:"周老師（範例）", cat:"AI 反思鷹架", feature:"學生撰寫實習反思紀錄，AI 依 Gibbs 反思循環即時回饋並保存學習歷程", audience:["護理系學生","實習指導教師"], ai:"有", use:"研究＋教學", url:"https://tmun.ai/p/reflection", date:"2026-11-10", views:458, access:"教室", rooms:4},
+  {name:"糖尿病衛教模組", author:"鄭衛教師（範例）", cat:"糖尿病衛教", feature:"衛教單元、前後測、AI 問答與學習成效資料分析", audience:["病人與家屬","衛教護理師"], ai:"有", use:"研究＋教學", url:"https://tmun.ai/p/dm-edu", date:"2026-11-05", views:731, access:"公開", rooms:3},
+  {name:"AI 協作教案產生器", author:"楊老師（範例）", cat:"AI 協作教案", feature:"輸入課程目標，AI 協助產生教案、學習活動與評量規準", audience:["教師"], ai:"有", use:"教學", url:"https://tmun.ai/p/lesson-plan", date:"2026-11-17", views:295, access:"公開", rooms:0},
+  {name:"高警訊藥品辨識練習", author:"劉藥師（範例）", cat:"藥事管理", feature:"高警訊藥品與外觀相似藥品辨識測驗", audience:["藥學系學生","護理師"], ai:"無", use:"教學", url:"https://tmun.ai/p/high-alert", date:"2026-10-12", views:264, access:"公開", rooms:2},
+  {name:"研究統計小幫手", author:"趙研究員（範例）", cat:"研究統計", feature:"上傳資料後由 AI 建議統計方法並解讀結果", audience:["研究生","臨床研究者"], ai:"有", use:"研究", url:"https://tmun.ai/p/stats-helper", date:"2026-10-27", views:352, access:"會員限定", rooms:0},
+  {name:"護理文獻快速檢索", author:"孫研究員（範例）", cat:"研究統計", feature:"以 PICO 架構檢索醫學文獻並整理證據等級", audience:["研究生","護理師"], ai:"有", use:"研究", url:"https://tmun.ai/p/ebn-search", date:"2026-11-21", views:98, access:"公開", rooms:0},
+  {name:"病房 QR 衛教牆", author:"何護理師（範例）", cat:"護理教育", feature:"病房張貼 QR code，連結到對應疾病衛教頁", audience:["病人與家屬"], ai:"無", use:"待分類", url:"https://tmun.ai/p/qr-edu", date:"2026-10-08", views:143, access:"公開", rooms:1},
+];
+const TODAY = "2026-11-22", WEEK_AGO = "2026-11-15", MONTH = TODAY.slice(0,7);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const useClass = u => u==="教學"?"teach":u==="研究"?"research":u==="研究＋教學"?"both":"todo";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = { get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+function addDays(d,n){const x=new Date(d+"T00:00:00");x.setDate(x.getDate()+n);return x.toISOString().slice(0,10);}
+
+/* ---------- 主題 / 選單 / 收合 / 登入 ---------- */
+(function ui(){
+  const root=document.documentElement, btn=$("#themeBtn");
+  const isDark=()=>root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  const paint=()=>{btn.textContent=isDark()?"☀":"☾";};
+  const saved=store.get("tmun-theme"); if(saved) root.dataset.theme=saved; paint();
+  btn.addEventListener("click",()=>{const t=isDark()?"light":"dark"; root.dataset.theme=t; store.set("tmun-theme",t); paint();});
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",paint);
+
+  const mb=$("#menuBtn"), menu=$("#menu");
+  const setMenu=open=>{menu.hidden=!open; mb.setAttribute("aria-expanded",open); mb.textContent=open?"✕":"☰";};
+  mb.addEventListener("click",e=>{e.stopPropagation(); setMenu(menu.hidden);});
+  document.addEventListener("click",e=>{if(!menu.hidden && !menu.contains(e.target)) setMenu(false);});
+  menu.addEventListener("click",e=>{if(e.target.closest("a")) setMenu(false);});
+  addEventListener("keydown",e=>{if(e.key==="Escape"){setMenu(false); $("#signinBox").hidden=true;}});
+
+  const cb=$("#collapseBtn"), body=$("#dashBody");
+  const setCol=c=>{body.hidden=c; cb.setAttribute("aria-expanded",!c); cb.textContent=c?"展開 ▼":"收起 ▲"; store.set("tmun-collapsed",c?"1":"0");};
+  if(store.get("tmun-collapsed")==="1") setCol(true);
+  cb.addEventListener("click",()=>setCol(!body.hidden));
+
+  document.querySelectorAll("[data-signin]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault(); $("#siMsg").hidden=true; $("#signinBox").hidden=false; $("#siEmail").focus();}));
+  $("#siClose").addEventListener("click",()=>$("#signinBox").hidden=true);
+  $("#signinBox").addEventListener("click",e=>{if(e.target.id==="signinBox") e.currentTarget.hidden=true;});
+  $("#signinForm").addEventListener("submit",e=>{e.preventDefault(); $("#siMsg").hidden=false;});
+})();
+
+/* ---------- 統計 ---------- */
+let unit="work";
+function median(a){const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length?(s.length%2?s[m]:Math.round((s[m-1]+s[m])/2)):0;}
+function countUp(el,to){ if(reduce){el.textContent=to.toLocaleString();return;} const t0=performance.now(),d=900;
+  (function step(t){const p=Math.min(1,(t-t0)/d);el.textContent=Math.round(to*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(step);})(t0);}
+function renderKpis(){
+  const authors=[...new Set(PROJECTS.map(p=>p.author))];
+  const views=PROJECTS.map(p=>p.views), sum=views.reduce((a,b)=>a+b,0);
+  countUp($("#kWorks"), unit==="work"?PROJECTS.length:authors.length);
+  $("#kWorksSub").innerHTML = unit==="work" ? `較 7 天前（${WEEK_AGO.slice(5)}）<b>+${PROJECTS.filter(p=>p.date>WEEK_AGO).length}</b>` : "以作者為單位計算";
+  countUp($("#kAuthors"), authors.length);
+  $("#kAuthorsSub").innerHTML=`平均每位 <b>${(PROJECTS.length/authors.length).toFixed(1)}</b> 件作品`;
+  countUp($("#kNew"), PROJECTS.filter(p=>p.date.startsWith(MONTH)).length);
+  $("#kNewSub").innerHTML=`自 <b>${MONTH}-01</b> 起追蹤`;
+  countUp($("#kMedian"), median(views));
+  $("#kMedianSub").innerHTML=`累計 <b>${sum.toLocaleString()}</b> 次，其中單一作品最高占 <b>${Math.round(Math.max(...views)/sum*100)}%</b>`;
+  countUp($("#kRooms"), PROJECTS.filter(p=>p.rooms>0).length);
+  $("#kRoomsSub").innerHTML=`共 <b>${PROJECTS.reduce((a,p)=>a+p.rooms,0)}</b> 堂課使用 ・ 尚未展示 ${PROJECTS.filter(p=>!p.rooms).length} 件`;
+  countUp($("#kTodo"), PROJECTS.filter(p=>p.use==="待分類").length);
+  $("#unitHint").textContent = unit==="work"?"每個公開頁面算 1 件":"每位發表作者算 1 個";
+}
+function renderCoverage(){
+  const g=[["公開","#e0507f"],["會員限定","#e3a645"],["教室","#b89ae8"]], n=PROJECTS.length;
+  const c=g.map(([k])=>PROJECTS.filter(p=>p.access===k).length), ai=PROJECTS.filter(p=>p.ai==="有").length;
+  $("#covText").innerHTML=`全站 <b>${n}</b> 件：公開 <b>${c[0]}</b>（${Math.round(c[0]/n*100)}%）・ 會員限定 <b>${c[1]}</b> ・ 教室 <b>${c[2]}</b>。具 AI 功能 <b>${ai}</b> 件（${Math.round(ai/n*100)}%）。`;
+  $("#covBar").innerHTML=g.map(([k,col],i)=>`<i style="flex-grow:${c[i]};background:${col}" title="${k} ${c[i]}"></i>`).join("");
+  $("#covLegend").innerHTML=g.map(([k,col],i)=>`<span><i style="background:${col}"></i>${k} <b>${c[i]}</b></span>`).join("");
+}
+function renderCats(){
+  const max=Math.max(...Object.keys(CATS).map(k=>PROJECTS.filter(p=>p.cat===k).length));
+  $("#catList").innerHTML=Object.entries(CATS).map(([k,col])=>{const ps=PROJECTS.filter(p=>p.cat===k);
+    return `<div class="c"><span class="t">${k}</span><span class="meter"><i style="width:${ps.length/max*100}%;background:${col}"></i></span><span class="n">${ps.length}</span><span class="ex">${ps.map(p=>esc(p.name)).join("、")}</span></div>`;}).join("");
+  $("#fCat").innerHTML='<option value="">分類：全部</option>'+Object.keys(CATS).map(k=>`<option>${k}</option>`).join("");
+  $("#heroTags").innerHTML=Object.entries(CATS).slice(0,6).map(([k,col])=>`<button type="button" class="tag" style="background:${col}" data-cat="${k}">${k}</button>`).join("");
+  document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{$("#fCat").value=b.dataset.cat;selectTab("inventory");refresh();$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});}));
+}
+
+/* ---------- 縮圖（依分類顏色自動產生） ---------- */
+let THUMB_N=0;
+function thumb(p,i){
+  const uid="tg"+(THUMB_N++);
+  const c=CATS[p.cat]||"#e0507f", s=(i*37)%5;
+  const blocks = s%2 ? `<rect x="14" y="40" width="70" height="60" rx="6" fill="#fff" opacity=".85"/><rect x="92" y="40" width="94" height="26" rx="6" fill="#fff" opacity=".6"/><rect x="92" y="74" width="94" height="26" rx="6" fill="#fff" opacity=".6"/>`
+    : `<rect x="14" y="40" width="172" height="30" rx="6" fill="#fff" opacity=".8"/><rect x="14" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/><rect x="74" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/><rect x="134" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/>`;
+  return `<svg class="thumb" viewBox="0 0 200 125" role="img" aria-label="${esc(p.name)} 縮圖"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="#f8a9c6"/></linearGradient></defs>
+    <rect width="200" height="125" fill="url(#${uid})"/><rect x="0" y="0" width="200" height="26" fill="#fff" opacity=".9"/>
+    <circle cx="14" cy="13" r="4" fill="${c}"/><rect x="24" y="9" width="${50+s*12}" height="8" rx="4" fill="${c}" opacity=".7"/>${blocks}
+    ${p.ai==="有"?`<g transform="translate(170 112)"><polygon points="0,-11 10,-5.5 10,5.5 0,11 -10,5.5 -10,-5.5" fill="#4a1f36"/><text y="3.5" text-anchor="middle" font-size="9" font-weight="800" fill="#fff" font-family="sans-serif">AI</text></g>`:""}</svg>`;
+}
+
+/* ---------- 篩選與清單 ---------- */
+let range={from:"",to:""};
+function inDate(p){return (!range.from||p.date>=range.from)&&(!range.to||p.date<=range.to);}
+function filtered(){
+  const q=$("#q").value.trim().toLowerCase(), a=$("#fAI").value, u=$("#fUse").value, c=$("#fCat").value;
+  return PROJECTS.filter(p=>inDate(p)&&(!a||p.ai===a)&&(!u||p.use===u)&&(!c||p.cat===c)&&(!q||[p.name,p.author,p.feature,p.cat,p.audience.join(" ")].join(" ").toLowerCase().includes(q)));
+}
+const aiBadge=p=>`<span class="${p.ai==="有"?"ai-yes":"ai-no"}">${p.ai==="有"?"有 AI":"無"}</span>`;
+const urlText=p=>esc(p.url.replace("https://",""));
+function renderTable(){
+  const rows=filtered(); $("#invCount").textContent=rows.length;
+  $("#invBody").innerHTML=rows.length?rows.map((p,i)=>`<tr>
+    <td class="no">${String(i+1).padStart(2,"0")}</td>
+    <td><div class="name">${esc(p.name)}</div><div class="cat" style="color:${CATS[p.cat]}">${esc(p.cat)}</div><div class="no">${p.date} 上架 ・ ${p.access} ・ 瀏覽 ${p.views}</div></td>
+    <td>${esc(p.author)}</td><td>${esc(p.feature)}</td>
+    <td><div class="aud">${p.audience.map(x=>`<span>${esc(x)}</span>`).join("")}</div></td>
+    <td>${aiBadge(p)}</td><td><span class="use ${useClass(p.use)}">${esc(p.use)}</span></td>
+    <td><a href="${esc(p.url)}" target="_blank" rel="noopener">${urlText(p)}</a></td></tr>`).join("")
+    :`<tr><td colspan="8" class="empty">沒有符合條件的專案，請調整搜尋、分類或日期。</td></tr>`;
+}
+function renderTimeline(){
+  const s=PROJECTS.map((p,i)=>[p,i]).filter(([p])=>inDate(p)).sort((a,b)=>b[0].date.localeCompare(a[0].date));
+  $("#tlList").innerHTML=s.length?s.map(([p,i])=>`<li>${thumb(p,i)}<div><time>${p.date}${p.date.startsWith(MONTH)?" ・ 本月新上架":""}</time><h4>${esc(p.name)}</h4>
+    <div class="info">${esc(p.author)} ・ 瀏覽 <b>${p.views.toLocaleString()}</b> 次 ・ <span style="color:${CATS[p.cat]};font-weight:700">${esc(p.cat)}</span></div><div class="info">${esc(p.feature)}</div></div></li>`).join("")
+    :`<li><div class="empty" style="grid-column:1/-1">這段期間沒有新上架的作品。</div></li>`;
+}
+function renderCards(){
+  const s=PROJECTS.map((p,i)=>[p,i]).filter(([p])=>inDate(p)).sort((a,b)=>b[0].views-a[0].views);
+  $("#cardGrid").innerHTML=s.length?s.map(([p,i])=>`<article class="card">${thumb(p,i)}<div class="body"><h4>${esc(p.name)}</h4>
+    <div class="by"><span>${esc(p.author)}</span><span class="views">👁 ${p.views.toLocaleString()}</span></div>
+    <div class="no">${p.date} 上架</div>
+    <div class="row">${aiBadge(p)}<span class="use ${useClass(p.use)}">${esc(p.use)}</span></div>
+    <a class="url" href="${esc(p.url)}" target="_blank" rel="noopener">${urlText(p)}</a></div></article>`).join("")
+    :`<div class="empty">這段期間沒有公開頁面。</div>`;
+}
+function refresh(){ renderTable(); renderTimeline(); renderCards();
+  const n=PROJECTS.filter(inDate).length; $("#dateCount").textContent=(range.from||range.to)?`符合 ${n} 件`:`共 ${n} 件`; }
+
+function setRange(kind){
+  document.querySelectorAll("[data-range]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.range===kind));
+  if(kind==="all") range={from:"",to:""};
+  else if(kind==="month") range={from:MONTH+"-01",to:TODAY};
+  else range={from:addDays(TODAY,-(+kind)+1),to:TODAY};
+  $("#dFrom").value=range.from; $("#dTo").value=range.to; refresh();
+}
+document.querySelectorAll("[data-range]").forEach(b=>b.addEventListener("click",()=>setRange(b.dataset.range)));
+["#dFrom","#dTo"].forEach(s=>$(s).addEventListener("change",()=>{range={from:$("#dFrom").value,to:$("#dTo").value};document.querySelectorAll("[data-range]").forEach(b=>b.setAttribute("aria-pressed","false"));refresh();}));
+
+const TABS=["timeline","pages","inventory"];
+function selectTab(id){
+  document.querySelectorAll('[role="tab"]').forEach(t=>t.setAttribute("aria-selected",t.getAttribute("aria-controls")===id));
+  document.querySelectorAll('[role="tabpanel"]').forEach(p=>p.hidden=p.id!==id);
+}
+document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener("click",()=>{const id=t.getAttribute("aria-controls");selectTab(id);try{history.replaceState(null,"","#"+id)}catch(e){}}));
+function route(){const h=location.hash.slice(1); if(TABS.includes(h)){selectTab(h);}}
+addEventListener("hashchange",route); route();
+
+$("#jumpMonth").addEventListener("click",()=>{setRange("month");selectTab("timeline");$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
+$("#jumpTodo").addEventListener("click",()=>{selectTab("inventory");$("#fUse").value="待分類";renderTable();$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
+["#q","#fAI","#fUse","#fCat"].forEach(s=>$(s).addEventListener("input",renderTable));
+$("#unitWork").addEventListener("click",()=>{unit="work";$("#unitWork").setAttribute("aria-pressed","true");$("#unitProj").setAttribute("aria-pressed","false");renderKpis();});
+$("#unitProj").addEventListener("click",()=>{unit="author";$("#unitProj").setAttribute("aria-pressed","true");$("#unitWork").setAttribute("aria-pressed","false");renderKpis();});
+$("#copyCsv").addEventListener("click",()=>{
+  const head=["專案名稱","作者","主題分類","功能","使用對象","是否具有 AI 功能","研究或教學用途","網站連結"], q=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const csv=[head.map(q).join(",")].concat(filtered().map(p=>[p.name,p.author,p.cat,p.feature,p.audience.join("、"),p.ai,p.use,p.url].map(q).join(","))).join("\n");
+  const out=$("#csvOut"), btn=$("#copyCsv");
+  const fallback=()=>{out.value=csv;out.hidden=false;out.focus();out.select();btn.textContent="已選取，請按 Ctrl+C";};
+  try{navigator.clipboard.writeText(csv).then(()=>{btn.textContent="已複製 ✓";setTimeout(()=>btn.textContent="複製為 CSV",1800);},fallback);}catch(e){fallback();}
+});
+
+/* ---------- 弧線節點 ---------- */
+(function arcNodes(){
+  const SHORT={"醫學教育與臨床訓練":"醫學教育","互動學習與遊戲":"互動遊戲"};
+  const topics=Object.keys(CATS).slice(0,7), cx=400, cy=420, r=310, NS="http://www.w3.org/2000/svg";
+  const spokes=document.getElementById("spokes"), nodes=document.getElementById("nodes");
+  topics.forEach((label,i)=>{
+    const ang=Math.PI-(Math.PI*(i+0.5)/topics.length), x=cx+r*Math.cos(ang), y=cy-r*Math.sin(ang);
+    const l=document.createElementNS(NS,"line");
+    Object.entries({x1:x,y1:y,x2:400,y2:300,stroke:"#e0507f","stroke-opacity":".45","stroke-width":"1.5",class:"spoke"}).forEach(([k,v])=>l.setAttribute(k,v));
+    l.style.animationDelay=(-i*0.2)+"s"; spokes.appendChild(l);
+    const left=x<cx-20, right=x>cx+20, lx=x+(left?-14:right?14:0), anchor=left?"end":right?"start":"middle", ly=y-(Math.abs(x-cx)<60?24:8);
+    const g=document.createElementNS(NS,"g");
+    g.innerHTML=`<circle class="node-pulse" cx="${x}" cy="${y}" r="7" fill="${CATS[label]}" style="animation-delay:${-i*0.3}s"/>
+      <circle cx="${x}" cy="${y}" r="6" fill="#fff" stroke="${CATS[label]}" stroke-width="3"/>
+      <text x="${lx}" y="${ly-14}" text-anchor="${anchor}" class="arc-code">TRACK ${String.fromCharCode(65+i)}</text>
+      <text x="${lx}" y="${ly}" text-anchor="${anchor}" class="arc-label">${SHORT[label]||label}</text>`;
+    nodes.appendChild(g);
+  });
+})();
+
+/* ---------- DNA → 粒子 → AI → 心電圖 → 愛心 動畫 ---------- */
+(function band(){
+  const cv=document.getElementById("bandCanvas"), ctx=cv.getContext("2d");
+  let W=0,H=0;
+  function resize(){const dpr=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  resize(); addEventListener("resize",resize);
+  const colors=["#e0507f","#f8a9c6","#b89ae8","#e3a645","#c06bd8","#ff8fb8"];
+  const parts=[]; for(let i=0;i<70;i++) parts.push({x:Math.random(),y:Math.random(),s:2+Math.random()*5,v:.0006+Math.random()*.0012,c:colors[i%colors.length]});
+  function ecgY(t){ if(t<.10)return 0; if(t<.16)return -.12*Math.sin((t-.10)/.06*Math.PI); if(t<.20)return 0; if(t<.22)return .15; if(t<.26)return -1; if(t<.29)return .45; if(t<.32)return 0; if(t<.46)return -.22*Math.sin((t-.32)/.14*Math.PI); return 0; }
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function heart(x,y,s){ctx.beginPath();ctx.moveTo(x,y+s*.35);ctx.bezierCurveTo(x-s*1.1,y-s*.4,x-s*.45,y-s*1.05,x,y-s*.45);ctx.bezierCurveTo(x+s*.45,y-s*1.05,x+s*1.1,y-s*.4,x,y+s*.35);ctx.closePath();}
+  function draw(ms){
+    if(!W){ resize(); }
+    const t=ms/1000; ctx.clearRect(0,0,W,H);
+    const mid=H/2, amp=H*.28, cs=getComputedStyle(document.documentElement);
+    rr(4,mid-H*.36,W-8,H*.72,H*.36); ctx.fillStyle=cs.getPropertyValue("--capsule").trim()||"rgba(255,255,255,.6)"; ctx.fill(); ctx.strokeStyle="rgba(224,80,127,.25)"; ctx.lineWidth=1; ctx.stroke();
+    const xD0=W*.03, xD1=W*.36, xP1=W*.56, xAI=W*.62, xE1=W*.92, xH=W*.955, k=2*Math.PI/Math.max(90,W*.09);
+    for(let x=xD0+6;x<xD1;x+=Math.max(10,W*.012)){const ph=x*k-t*2.2, f=x>xD1-W*.06?(xD1-x)/(W*.06):1;
+      ctx.strokeStyle=`rgba(184,154,232,${.55*f})`;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,mid+Math.sin(ph)*amp);ctx.lineTo(x,mid-Math.sin(ph)*amp);ctx.stroke();}
+    [[0,"#e0507f"],[Math.PI,"#c06bd8"]].forEach(([off,c])=>{ctx.beginPath();ctx.lineWidth=3.2;ctx.strokeStyle=c;ctx.lineCap="round";
+      for(let x=xD0+6;x<=xD1;x+=2){const y=mid+Math.sin(x*k-t*2.2+off)*amp*(x>xD1-W*.05?(xD1-x)/(W*.05)*.7+.3:1); x===xD0+6?ctx.moveTo(x,y):ctx.lineTo(x,y);} ctx.stroke();});
+    parts.forEach(p=>{ if(!reduce){p.x+=p.v; if(p.x>1){p.x=0;p.y=Math.random();}}
+      const x=xD1-W*.04+p.x*(xAI-xD1-W*.01), y=mid+(p.y-.5)*2*((1-p.x)*amp*1.5+4);
+      ctx.globalAlpha=p.x<.1?p.x*10:p.x>.85?(1-p.x)/.15:1; ctx.fillStyle=p.c; const s=p.s*(1-p.x*.6); ctx.fillRect(x-s/2,y-s/2,s,s);});
+    ctx.globalAlpha=1;
+    const g=ctx.createLinearGradient(xP1,0,xAI,0); g.addColorStop(0,"rgba(224,80,127,0)"); g.addColorStop(1,"rgba(224,80,127,.6)");
+    ctx.strokeStyle=g; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(xP1-W*.04,mid); ctx.lineTo(xAI,mid); ctx.stroke();
+    const sz=Math.min(H*.62,86), pulse=1+(reduce?0:Math.sin(t*3)*.04);
+    ctx.save(); ctx.translate(xAI+sz*.1,mid); ctx.scale(pulse,pulse); ctx.shadowColor="rgba(224,80,127,.6)"; ctx.shadowBlur=24; ctx.fillStyle="#e3a645";
+    for(let i=0;i<4;i++){const o=-sz*.33+i*sz*.22; ctx.fillRect(o-2,-sz/2-8,4,8); ctx.fillRect(o-2,sz/2,4,8); ctx.fillRect(-sz/2-8,o-2,8,4); ctx.fillRect(sz/2,o-2,8,4);}
+    rr(-sz/2,-sz/2,sz,sz,sz*.18); const cg=ctx.createLinearGradient(-sz/2,-sz/2,sz/2,sz/2); cg.addColorStop(0,"#5a1d3e"); cg.addColorStop(1,"#3b1236"); ctx.fillStyle=cg; ctx.fill();
+    ctx.shadowBlur=0; ctx.lineWidth=2.5; ctx.strokeStyle="#f8a9c6"; ctx.stroke();
+    ctx.fillStyle="#ffd1e2"; ctx.font=`800 ${sz*.42}px Fraunces, Georgia, serif`; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("AI",0,sz*.03); ctx.restore();
+    const ex0=xAI+sz*.62+10, period=(xE1-ex0)/2.2, shift=reduce?0:(t*period*1.1)%period;
+    ctx.beginPath(); ctx.lineWidth=3; ctx.strokeStyle="#e0507f"; ctx.shadowColor="rgba(224,80,127,.55)"; ctx.shadowBlur=10; ctx.lineJoin="round";
+    for(let x=ex0;x<=xE1;x+=1.5){const ph=((((x-ex0)-shift)%period)+period)%period/period, y=mid+ecgY(ph)*amp*1.25; x===ex0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke(); ctx.shadowBlur=0;
+    const lastPh=((((xE1-ex0)-shift)%period)+period)%period/period, beat=reduce?0:Math.max(0,1-Math.abs(lastPh-.25)*8), hs=Math.min(H*.26,30)*(1+beat*.22);
+    ctx.save(); ctx.shadowColor="rgba(224,80,127,.7)"; ctx.shadowBlur=14+beat*16; heart(xH,mid+hs*.2,hs);
+    const hg=ctx.createLinearGradient(xH,mid-hs,xH,mid+hs); hg.addColorStop(0,"#ff7aa8"); hg.addColorStop(1,"#d22f68"); ctx.fillStyle=hg; ctx.fill(); ctx.restore();
+    if(!reduce) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  $("#collapseBtn").addEventListener("click",()=>{ if(!$("#dashBody").hidden){ resize(); if(reduce) requestAnimationFrame(draw);} });
+})();
+
+renderKpis(); renderCoverage(); renderCats(); refresh();
+</script>
+</body>
+</html>
