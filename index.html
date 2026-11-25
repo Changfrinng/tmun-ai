@@ -396,6 +396,30 @@ html[lang="en"] h1,html[lang="en"] .hero-copy h2{letter-spacing:-.5px}
 .g-stats b{font:800 18px var(--font-display);color:var(--rose);font-variant-numeric:tabular-nums}
 .g-card .btn.solid{text-decoration:none}
 @media (max-width:820px){.g-steps{grid-template-columns:1fr}}
+
+/* ===== 網站即時流量 Live traffic ===== */
+#traffic{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px}
+.tr-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12.5px}
+.tr-head h3{margin:0;font-size:15px;letter-spacing:2px;color:var(--rose-deep);display:flex;align-items:center;gap:8px}
+.tr-tag{display:inline-flex;align-items:center;gap:5px;font:700 11px var(--font-body);letter-spacing:0;color:var(--teach-fg);background:var(--teach-bg);padding:2px 9px;border-radius:999px}
+.tr-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);animation:blink 1.6s infinite}
+.tr-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.tr-kpi{border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0;background:var(--surface-2)}
+.tr-kpi.hot{border-color:var(--rose);background:linear-gradient(180deg,var(--surface),var(--tint-rose))}
+.tr-kpi .k{font-size:12.5px;font-weight:700}
+.tr-kpi .v{font:800 30px/1.15 var(--font-display);color:var(--rose);font-variant-numeric:tabular-nums;margin-top:4px}
+.tr-kpi .s{font-size:11.5px;color:var(--ink-soft)}
+.tr-chart{margin-top:14px}
+.tr-ct{font-size:13px;font-weight:700;margin-bottom:6px}
+.tr-bars{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px;height:150px;align-items:end;border-bottom:1px solid var(--line)}
+.tr-b{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;position:relative;padding-bottom:18px}
+.tr-b i{display:block;width:70%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--blush)}
+.tr-b.today i{background:var(--rose)}
+.tr-b .n{font:500 11px var(--font-mono);color:var(--ink);margin-bottom:3px}
+.tr-b .d{position:absolute;bottom:0;font:500 10px var(--font-mono);color:var(--ink-soft);white-space:nowrap}
+.tr-b.today .d{color:var(--rose-deep);font-weight:700}
+@media (max-width:1100px){.tr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:520px){.tr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tr-b .d{font-size:8px}.tr-bars{gap:3px}.tr-b .n{font-size:9px}}
 </style>
 </head>
 <body style="margin:0">
@@ -1741,6 +1765,58 @@ function renderGames(lang){
   box.querySelector("#gClose").addEventListener("click",()=>{frame.srcdoc=""; stage.hidden=true; file.value="";});
 }
 
+/* ============================================================
+   網站即時流量（真實數據）/ Live site traffic
+   使用同一個 Apps Script 計數器：每天一個 site-YYYYMMDD 計數，
+   同一位訪客每天只算一次。遊戲點擊率 = 全部遊戲遊玩人次 ÷ 曝光。
+   ============================================================ */
+const TRAFFIC_TXT = {
+  zh:{title:"網站即時流量", tag:"真實數據", sub:"同一位訪客每天只算一次；日期以台灣時間計算。",
+    k:["今日瀏覽人次","昨日瀏覽人次","近 7 日瀏覽人次","累計瀏覽人次","遊戲曝光次數","遊戲遊玩人次","遊戲點擊率"],
+    ks:["今天到目前為止","與前一天比較","包含今天","自開始統計以來","遊戲卡片出現在畫面中","按下「開始玩」的次數","遊玩人次 ÷ 曝光次數"],
+    chart:"近 14 天每日瀏覽人次", loading:"讀取中…", off:"尚未設定計數器網址，無法顯示即時流量。", err:"暫時讀不到流量數據，請稍後重新整理。", since:d=>`自 ${d} 開始統計`, vs:(d)=>d===null?"":(d>=0?`比前一天 +${d}`:`比前一天 ${d}`)},
+  en:{title:"Live site traffic", tag:"Real data", sub:"Each visitor counts once per day; dates use Taiwan time.",
+    k:["Visitors today","Visitors yesterday","Visitors, last 7 days","Total visitors","Game impressions","Game plays","Game click-through"],
+    ks:["So far today","Compared with the day before","Including today","Since tracking started","Game cards shown on screen","Times “Play” was pressed","Plays ÷ impressions"],
+    chart:"Daily visitors, last 14 days", loading:"Loading…", off:"The counter URL isn't set, so live traffic can't be shown.", err:"Couldn't load traffic right now. Please refresh later.", since:d=>`Tracking since ${d}`, vs:(d)=>d===null?"":(d>=0?`+${d} vs. day before`:`${d} vs. day before`)}
+};
+const twDay=(offset=0)=>new Date(Date.now()+8*3600e3-offset*86400e3).toISOString().slice(0,10);
+let TRAFFIC=null, TRAFFIC_STATE="idle";
+function loadTraffic(cb){
+  const url=safeUrl(GAME_CONFIG.statsUrl); if(!url){TRAFFIC_STATE="off";cb();return;}
+  if(TRAFFIC_STATE==="ok"||TRAFFIC_STATE==="loading"){ if(TRAFFIC_STATE==="ok") cb(); return; }
+  TRAFFIC_STATE="loading";
+  const key="site-"+twDay().replace(/-/g,""); let counted=false;
+  try{counted=localStorage.getItem("tmun-visit")===key}catch(e){}
+  const q=url+(url.includes("?")?"&":"?")+(counted?"a=get":"a=view&ids="+key);
+  fetch(q).then(r=>{if(!r.ok)throw 0;return r.json();}).then(j=>{TRAFFIC=j||{};TRAFFIC_STATE="ok";try{localStorage.setItem("tmun-visit",key)}catch(e){} cb();})
+    .catch(()=>{TRAFFIC_STATE="err";cb();});
+}
+function renderTraffic(lang){
+  const T=TRAFFIC_TXT[lang], box=document.getElementById("traffic"); if(!box) return;
+  const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const nf=n=>Number(n).toLocaleString("en-US");
+  let vals=Array(7).fill("—"), subs=[...T.ks], bars=[], msg="";
+  if(TRAFFIC_STATE==="off") msg=T.off; else if(TRAFFIC_STATE==="err") msg=T.err; else if(TRAFFIC_STATE!=="ok") msg=T.loading;
+  if(TRAFFIC_STATE==="ok"){
+    const day=d=>{const x=TRAFFIC["site-"+d.replace(/-/g,"")];return x?x.view:0;};
+    const siteKeys=Object.keys(TRAFFIC).filter(k=>/^site-\d{8}$/.test(k)).sort();
+    const total=siteKeys.reduce((a,k)=>a+(TRAFFIC[k].view||0),0);
+    const today=day(twDay()), yest=day(twDay(1)), prev=day(twDay(2));
+    let wk=0; for(let i=0;i<7;i++) wk+=day(twDay(i));
+    const games=Object.entries(TRAFFIC).filter(([k])=>/^g[0-9a-z]+$/.test(k)&&!TRAFFIC[k].hidden);
+    const gv=games.reduce((a,[,x])=>a+(x.view||0),0), gp=games.reduce((a,[,x])=>a+(x.play||0),0);
+    vals=[nf(today),nf(yest),nf(wk),nf(total),nf(gv),nf(gp),gv?(gp/gv*100).toFixed(1)+"%":"0.0%"];
+    subs[1]=T.vs(siteKeys.length>1?yest-prev:null)||T.ks[1];
+    if(siteKeys.length){const f=siteKeys[0].slice(5);subs[3]=T.since(`${f.slice(0,4)}-${f.slice(4,6)}-${f.slice(6)}`);}
+    for(let i=13;i>=0;i--){const d=twDay(i);bars.push({d:d.slice(5).replace("-","/"),v:day(d),today:i===0});}
+  }
+  const max=Math.max(1,...bars.map(b=>b.v));
+  box.innerHTML=`<div class="tr-head"><h3>${T.title} <span class="tr-tag"><span class="dot"></span>${T.tag}</span></h3><span class="muted">${msg?e(msg):T.sub}</span></div>
+    <div class="tr-grid">${T.k.map((k,i)=>`<div class="tr-kpi${i===0?" hot":""}"><div class="k">${k}</div><div class="v">${vals[i]}</div><div class="s">${e(subs[i])}</div></div>`).join("")}</div>
+    ${bars.length?`<div class="tr-chart" role="img" aria-label="${e(T.chart)}"><div class="tr-ct">${T.chart}</div><div class="tr-bars">${bars.map(b=>`<div class="tr-b${b.today?" today":""}"><span class="n">${b.v}</span><i style="height:${Math.max(2,b.v/max*100)}%"></i><span class="d">${b.d}</span></div>`).join("")}</div></div>`:""}`;
+}
+
 (function(){
   const TITLES={zh:"tmun.ai 已發表專案儀表板",en:"tmun.ai Project Dashboard"};
   let ctrl=null;
@@ -1760,6 +1836,7 @@ function renderGames(lang){
     wrap.querySelector("header.site").after(av);
     const setAdmin=on=>{wrap.classList.toggle("admin-mode",on); av.hidden=!on; if(on){renderAdmin(lang); window.scrollTo(0,0);}};
     renderGames(lang);
+    const cov=app.querySelector("#dashBody .coverage"); if(cov){const tr=document.createElement("section"); tr.id="traffic"; tr.setAttribute("aria-label", lang==="en"?"Live site traffic":"網站即時流量"); cov.after(tr); renderTraffic(lang); loadTraffic(()=>renderTraffic(lang));}
     if(location.hash==="#games") document.getElementById("games").scrollIntoView();
     document.getElementById("siAdmin").addEventListener("click",()=>{document.getElementById("signinBox").hidden=true; location.hash="admin";});
     addEventListener("hashchange",()=>setAdmin(location.hash==="#admin"),{signal:ctrl.signal});
