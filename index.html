@@ -62,7 +62,7 @@
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;
   background-image:radial-gradient(1200px 500px at 85% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(900px 400px at -10% 30%,var(--glow2) 0%,transparent 60%)}
-.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{width:100%;max-width:none;margin:0;padding-left:max(clamp(12px,2.5vw,40px),env(safe-area-inset-left,0px));padding-right:max(clamp(12px,2.5vw,40px),env(safe-area-inset-right,0px))}
 a{color:var(--rose-deep)}
 :focus-visible{outline:3px solid var(--rose);outline-offset:2px;border-radius:6px}
 button{font-family:inherit}
