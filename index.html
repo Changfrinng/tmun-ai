@@ -411,6 +411,14 @@ html[lang="en"] h1,html[lang="en"] .hero-copy h2{letter-spacing:-.5px}
 .tr-kpi .s{font-size:11.5px;color:var(--ink-soft)}
 .tr-chart{margin-top:14px}
 .tr-ct{font-size:13px;font-weight:700;margin-bottom:6px}
+.tr-line{width:100%;height:auto;display:block}
+.tr-line .g{stroke:var(--line)}
+.tr-line .ax{font:500 11px var(--font-mono);fill:var(--ink-soft)}
+.tr-line .ax.now{fill:var(--rose-deep);font-weight:700}
+.tr-line .ln{fill:none;stroke:var(--rose);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.tr-line .pt circle{fill:var(--surface);stroke:var(--rose);stroke-width:2.5}
+.tr-line .pt.today circle{fill:var(--rose)}
+.tr-line .vl{font:600 11px var(--font-mono);fill:var(--ink)}
 .tr-bars{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px;height:150px;align-items:end;border-bottom:1px solid var(--line)}
 .tr-b{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;position:relative;padding-bottom:18px}
 .tr-b i{display:block;width:70%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--blush)}
@@ -419,7 +427,7 @@ html[lang="en"] h1,html[lang="en"] .hero-copy h2{letter-spacing:-.5px}
 .tr-b .d{position:absolute;bottom:0;font:500 10px var(--font-mono);color:var(--ink-soft);white-space:nowrap}
 .tr-b.today .d{color:var(--rose-deep);font-weight:700}
 @media (max-width:1100px){.tr-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:520px){.tr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tr-b .d{font-size:8px}.tr-bars{gap:3px}.tr-b .n{font-size:9px}}
+@media (max-width:520px){.tr-line .vl{display:none}.tr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tr-b .d{font-size:8px}.tr-bars{gap:3px}.tr-b .n{font-size:9px}}
 </style>
 </head>
 <body style="margin:0">
@@ -1792,6 +1800,25 @@ function loadTraffic(cb){
   fetch(q).then(r=>{if(!r.ok)throw 0;return r.json();}).then(j=>{TRAFFIC=j||{};TRAFFIC_STATE="ok";try{localStorage.setItem("tmun-visit",key)}catch(e){} cb();})
     .catch(()=>{TRAFFIC_STATE="err";cb();});
 }
+function trafficLine(pts,label){
+  const W=900,H=220,L=40,R=24,Tp=26,B=30, n=pts.length;
+  const step=Math.max(4,Math.ceil(Math.max(...pts.map(p=>p.v))/4)), maxV=step*4;
+  const x=i=>L+i*(W-L-R)/(n-1), y=v=>Tp+(1-v/maxV)*(H-Tp-B);
+  const P=pts.map((p,i)=>[x(i),y(p.v)]);
+  let d=`M${P[0][0].toFixed(1)},${P[0][1].toFixed(1)}`;
+  for(let i=0;i<n-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(n-1,i+2)];
+    const lo=Math.min(p1[1],p2[1]), hi=Math.max(p1[1],p2[1]), cl=v=>Math.max(lo,Math.min(hi,v));
+    const c1=[p1[0]+(p2[0]-p0[0])/6, cl(p1[1]+(p2[1]-p0[1])/6)], c2=[p2[0]-(p3[0]-p1[0])/6, cl(p2[1]-(p3[1]-p1[1])/6)];
+    d+=`C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;}
+  const area=d+`L${P[n-1][0].toFixed(1)},${y(0)}L${P[0][0].toFixed(1)},${y(0)}Z`;
+  const ticks=[0,1,2,3,4].map(k=>k*step);
+  return `<svg class="tr-line" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">
+    <defs><linearGradient id="trFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0507f" stop-opacity=".32"/><stop offset="1" stop-color="#e0507f" stop-opacity="0"/></linearGradient></defs>
+    ${ticks.map(t=>`<line class="g" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-8}" y="${y(t)+3.5}" text-anchor="end">${t}</text>`).join("")}
+    <path d="${area}" fill="url(#trFill)"/><path class="ln" d="${d}"/>
+    ${pts.map((p,i)=>`<g class="pt${p.today?" today":""}"><circle cx="${P[i][0]}" cy="${P[i][1]}" r="${p.today?6:4}"/><text class="vl" x="${P[i][0]}" y="${P[i][1]-11}" text-anchor="middle">${p.v}</text><text class="ax${p.today?" now":""}" x="${P[i][0]}" y="${H-8}" text-anchor="middle">${p.d}</text></g>`).join("")}
+  </svg>`;
+}
 function renderTraffic(lang){
   const T=TRAFFIC_TXT[lang], box=document.getElementById("traffic"); if(!box) return;
   const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1814,7 +1841,7 @@ function renderTraffic(lang){
   const max=Math.max(1,...bars.map(b=>b.v));
   box.innerHTML=`<div class="tr-head"><h3>${T.title} <span class="tr-tag"><span class="dot"></span>${T.tag}</span></h3><span class="muted">${msg?e(msg):T.sub}</span></div>
     <div class="tr-grid">${T.k.map((k,i)=>`<div class="tr-kpi${i===0?" hot":""}"><div class="k">${k}</div><div class="v">${vals[i]}</div><div class="s">${e(subs[i])}</div></div>`).join("")}</div>
-    ${bars.length?`<div class="tr-chart" role="img" aria-label="${e(T.chart)}"><div class="tr-ct">${T.chart}</div><div class="tr-bars">${bars.map(b=>`<div class="tr-b${b.today?" today":""}"><span class="n">${b.v}</span><i style="height:${Math.max(2,b.v/max*100)}%"></i><span class="d">${b.d}</span></div>`).join("")}</div></div>`:""}`;
+    ${bars.length?`<div class="tr-chart"><div class="tr-ct">${T.chart}</div>${trafficLine(bars,T.chart)}</div>`:""}`;
 }
 
 (function(){
