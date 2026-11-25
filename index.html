@@ -6,7 +6,7 @@
 <title>tmun.ai 已發表專案儀表板</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: pink sheet — header nav, collapsible pinned dashboard, animated AI hero, tabs (Timeline / 所有公開頁面 / 盤點表), platform sections, footer */
 :root{
@@ -24,7 +24,7 @@
   --warn-bg:#fff6e4; --warn-line:#f3d79c; --warn-fg:#8a5a0e;
   --shadow:rgba(184,50,95,.35);
   --font-display:"Fraunces","Noto Serif TC",Georgia,serif;
-  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-body:"Inter","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
   --radius:18px;
 }
@@ -279,9 +279,87 @@ footer a:hover{color:var(--rose-deep)}
   .cats .c{grid-template-columns:110px minmax(0,1fr) 30px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* language toggle */
+.iconbtn.lang{font:800 13px var(--font-body);width:auto;min-width:38px;padding:0 10px}
+/* English-version adjustments */
+html[lang="en"] h1,html[lang="en"] .hero-copy h2{letter-spacing:-.5px}
+.cats .c{grid-template-columns:minmax(0,200px) minmax(0,1fr) 36px}
+.deflist dt{white-space:normal}
+@media (max-width:520px){.cats .c{grid-template-columns:minmax(0,130px) minmax(0,1fr) 30px}}
+
+/* ===== 後台數據分析 Admin analytics ===== */
+.wrap.admin-mode > :not(header.site):not(#adminView){display:none!important}
+#adminView{padding-block:22px 40px}
+.adm-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px}
+.adm-head h1{font-size:clamp(26px,4vw,40px)}
+.adm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.adm-note{margin-top:14px;display:flex;gap:10px;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-fg);border-radius:12px;padding:10px 14px;font-size:13px}
+.adm-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:16px}
+.adm-kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-width:0}
+.adm-kpi .k{font-size:13px;font-weight:700}
+.adm-kpi .v{font:800 32px/1.15 var(--font-display);color:var(--rose);font-variant-numeric:tabular-nums;margin-top:4px}
+.adm-kpi .s{font-size:12px;color:var(--ink-soft)}
+.adm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.pa{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-width:0}
+.pa.wide{grid-column:1/-1}
+.pa h3{margin:0;font-size:17px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pa h3 .n{font:700 11px var(--font-mono);color:var(--rose-deep);letter-spacing:1.5px}
+.pa .desc{margin:2px 0 14px;font-size:12.5px;color:var(--ink-soft)}
+.pa .foot{margin-top:10px;font-size:12.5px;color:var(--ink-soft)}
+.pa .foot b{color:var(--ink)}
+.hb{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:13px;margin-bottom:8px}
+.hb .l{line-height:1.3}
+.hb .t{height:10px;background:var(--bg-2);border-radius:999px;overflow:hidden;position:relative}
+.hb .t i{display:block;height:100%;border-radius:999px;background:var(--rose)}
+.hb .t i.good{background:var(--mint)}
+.hb .t i.warn{background:var(--gold)}
+.hb .t i.lilac{background:var(--lilac)}
+.hb .t .avg{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55}
+.hb .v{font:500 12px var(--font-mono);text-align:right;font-variant-numeric:tabular-nums}
+.hb .v small{display:block;color:var(--ink-soft);font-size:10.5px}
+.legend-s{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+.legend-s i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.trend svg{width:100%;height:auto;display:block}
+.trend .grid line{stroke:var(--line)}
+.trend .ax{font:500 10px var(--font-mono);fill:var(--ink-soft)}
+.trend .area{fill:var(--rose);opacity:.14}
+.trend .ln{fill:none;stroke:var(--rose);stroke-width:2.5;stroke-linejoin:round}
+.trend .ln2{fill:none;stroke:var(--lilac);stroke-width:2;stroke-dasharray:5 4}
+.trend .end{fill:var(--surface);stroke:var(--rose);stroke-width:2.5}
+.trend .endlbl{font:700 11px var(--font-mono);fill:var(--rose-deep)}
+.interest{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.interest li{display:grid;grid-template-columns:34px minmax(0,1fr) 56px;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+.interest .rk{font:800 22px var(--font-display);color:var(--rose)}
+.interest .nm{font-weight:700;font-size:14px}
+.interest .why{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.interest .why span{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--tint-rose);color:var(--rose-deep)}
+.interest .sc{text-align:right;font:800 22px var(--font-display);color:var(--ink)}
+.interest .sc small{display:block;font:500 10px var(--font-mono);color:var(--ink-soft)}
+.adm-table{overflow-x:auto}
+.adm-table table{min-width:560px;font-size:13px}
+.adm-table td,.adm-table th{padding:8px 10px}
+.adm-table code{font:500 12px var(--font-mono);color:var(--rose-deep);background:var(--tint-rose);padding:1px 6px;border-radius:6px;white-space:nowrap}
+.adm-table td.num{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums}
+.adm-table th.num{text-align:right}
+.adm-table th button{all:unset;cursor:pointer}
+.adm-table th button:focus-visible{outline:2px solid var(--rose)}
+.live{margin-top:14px;border:1px dashed var(--rose);border-radius:14px;padding:12px 14px}
+.live h4{margin:0 0 4px;font-size:14px;display:flex;gap:8px;align-items:center}
+.live h4 .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);animation:blink 1.4s infinite}
+.live .empty{padding:10px;text-align:left}
+.live ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.live li{font:500 12px var(--font-mono);padding:3px 10px;border-radius:999px;background:var(--bg-2)}
+.live li b{color:var(--rose-deep)}
+@media (max-width:1100px){.adm-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){.adm-grid{grid-template-columns:1fr}.hb{grid-template-columns:minmax(0,120px) minmax(0,1fr) 62px}}
+@media (max-width:520px){.adm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body style="margin:0">
+
+<div id="app"></div>
+<template id="tpl-zh">
 
 <div class="topbar"></div>
 <div class="wrap">
@@ -294,6 +372,7 @@ footer a:hover{color:var(--rose-deep)}
         <a href="https://line.tmun.ai" target="_blank" rel="noopener">LINE Bot <small>line.tmun.ai</small></a>
         <a href="#signin" class="signin" data-signin>Sign in</a>
       </nav>
+      <button class="iconbtn lang" type="button" id="langBtn" aria-label="Switch to English" title="English">EN</button>
       <button class="iconbtn" type="button" id="themeBtn" aria-label="切換深色模式" title="切換深色模式">☾</button>
       <button class="iconbtn" type="button" id="menuBtn" aria-label="開啟選單" aria-expanded="false" aria-controls="menu">☰</button>
       <div class="menu" id="menu" hidden>
@@ -325,7 +404,7 @@ footer a:hover{color:var(--rose-deep)}
         <span class="pill"><span class="dot"></span>目前為範例資料</span>
         <button class="collapse-btn" type="button" id="collapseBtn" aria-expanded="true" aria-controls="dashBody">收起 ▲</button>
       </div>
-      <span>資料截至 <b>2026-11-22</b> ・ 網址 <b>tmun.ai</b></span>
+      <span>資料截至 <b>2026-11-25</b> ・ 網址 <b>tmun.ai</b></span>
     </div>
   </section>
 
@@ -520,11 +599,257 @@ footer a:hover{color:var(--rose-deep)}
     <div class="muted" style="font-size:13px">平台採邀請制，請使用受邀的帳號登入。</div>
     <label for="siEmail">電子郵件</label><input id="siEmail" type="email" autocomplete="off" placeholder="name@example.edu.tw">
     <div class="msg" id="siMsg" hidden>這是版面示意，尚未連接登入系統。</div>
+    <button class="btn" type="button" id="siAdmin" style="margin-top:14px;width:100%">進入後台（示意）</button>
     <div class="acts"><button class="btn" type="button" id="siClose">關閉</button><button class="btn solid" type="submit">寄送登入連結</button></div>
   </form>
 </div>
 
+</template>
+<template id="tpl-en">
+
+<div class="topbar"></div>
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#timeline" aria-label="tmun.ai home"><span class="mark">AI</span><span>tmun.ai<small>NURSING · EDU · AI</small></span></a>
+    <div class="navside">
+      <nav class="main" aria-label="Main menu">
+        <a href="#store">Store</a>
+        <a href="#about">About</a>
+        <a href="https://line.tmun.ai" target="_blank" rel="noopener">LINE Bot <small>line.tmun.ai</small></a>
+        <a href="#signin" class="signin" data-signin>Sign in</a>
+      </nav>
+      <button class="iconbtn lang" type="button" id="langBtn" aria-label="切換為中文" title="中文">中</button>
+      <button class="iconbtn" type="button" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">☾</button>
+      <button class="iconbtn" type="button" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu">☰</button>
+      <div class="menu" id="menu" hidden>
+        <a class="only-narrow" href="#store">Store</a>
+        <a class="only-narrow" href="#about">About</a>
+        <a class="only-narrow" href="https://line.tmun.ai" target="_blank" rel="noopener">LINE Bot (line.tmun.ai)</a>
+        <a class="only-narrow" href="#signin" data-signin>Sign in</a>
+        <div class="sep only-narrow"></div>
+        <a href="#timeline">Timeline</a>
+        <a href="#pages">All public pages</a>
+        <a href="#inventory">Site feature inventory</a>
+        <a href="#features">AI &amp; tech features</a>
+        <div class="sep"></div>
+        <a href="https://tmun.ai/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        <a href="https://tmun.ai/terms" target="_blank" rel="noopener">Terms of Service</a>
+        <a href="https://tmun.ai/llms.txt" target="_blank" rel="noopener">llms.txt</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="titlerow">
+    <div>
+      <div class="eyebrow">TMUN.AI · ADMIN DASHBOARD</div>
+      <h1><span class="en">tmun.ai</span> <span class="zh">Published Projects Dashboard</span></h1>
+    </div>
+    <div class="meta">
+      <div class="meta-top">
+        <span class="pill"><span class="dot"></span>Sample data</span>
+        <button class="collapse-btn" type="button" id="collapseBtn" aria-expanded="true" aria-controls="dashBody">Collapse ▲</button>
+      </div>
+      <span>Data as of <b>2026-11-25</b> · URL <b>tmun.ai</b></span>
+    </div>
+  </section>
+
+  <div id="dashBody">
+    <section class="hero" aria-label="Animated AI hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="kicker">NURSING EDUCATION × AI</div>
+          <h2>Nursing Education<br><span>AI Platform</span></h2>
+          <p>Build, publish and showcase web apps with AI. Knowledge and data from the research bench are translated by AI and delivered to the bedside and the classroom.</p>
+          <div class="tags" id="heroTags"></div>
+        </div>
+        <div class="arc-box">
+          <svg viewBox="0 0 800 440" role="img" aria-label="Animated diagram of a central AI chip linked to seven topic tracks">
+            <defs>
+              <linearGradient id="arcG" x1="0" x2="1"><stop offset="0" stop-color="#f8a9c6"/><stop offset=".5" stop-color="#e0507f"/><stop offset="1" stop-color="#b89ae8"/></linearGradient>
+              <linearGradient id="hexG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f06a98"/><stop offset="1" stop-color="#a86ee0"/></linearGradient>
+              <radialGradient id="halo"><stop offset="0" stop-color="#ff9cc2" stop-opacity=".7"/><stop offset="1" stop-color="#ff9cc2" stop-opacity="0"/></radialGradient>
+              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+            </defs>
+            <circle cx="400" cy="300" r="120" fill="url(#halo)"/>
+            <g class="spin"><circle cx="400" cy="300" r="150" fill="none" stroke="#e0507f" stroke-opacity=".35" stroke-dasharray="2 10"/></g>
+            <g class="spin rev"><circle cx="400" cy="300" r="205" fill="none" stroke="#b89ae8" stroke-opacity=".45" stroke-dasharray="14 18"/></g>
+            <circle cx="400" cy="300" r="95" fill="none" stroke="#e0507f" stroke-opacity=".25"/>
+            <path id="mainArc" d="M 90 420 A 310 310 0 0 1 710 420" fill="none" stroke="url(#arcG)" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 90 420 A 310 310 0 0 1 710 420" fill="none" stroke="url(#arcG)" stroke-width="12" stroke-opacity=".25" filter="url(#soft)"/>
+            <g id="spokes"></g>
+            <g id="nodes"></g>
+            <circle r="7" fill="#fff" stroke="#e0507f" stroke-width="3"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#mainArc"/></animateMotion></circle>
+            <circle r="16" fill="#ff8fb8" opacity=".35" filter="url(#soft)"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#mainArc"/></animateMotion></circle>
+            <polygon class="hex-glow" points="400,228 462,264 462,336 400,372 338,336 338,264" fill="#ff9cc2" opacity=".4" filter="url(#soft)"/>
+            <polygon points="400,236 455,268 455,332 400,364 345,332 345,268" fill="url(#hexG)" stroke="#fff" stroke-width="3"/>
+            <text x="400" y="314" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="800" font-size="42" fill="#fff">AI</text>
+            <text x="400" y="404" text-anchor="middle" class="arc-code" font-size="11">NURSING · TRANSLATIONAL · INTELLIGENCE</text>
+          </svg>
+        </div>
+      </div>
+      <div class="band">
+        <canvas id="bandCanvas" aria-label="Animation: DNA turns into data particles, passes through an AI chip, and becomes an ECG trace and a beating heart"></canvas>
+        <div class="band-labels"><span>BENCH · RESEARCH</span><span>AI TRANSLATION</span><span>BEDSIDE · CLINICAL</span></div>
+      </div>
+    </section>
+
+    <div class="unitrow">
+      <strong>Count by</strong>
+      <div class="seg" role="group" aria-label="Count by">
+        <button type="button" id="unitWork" aria-pressed="true">Project</button>
+        <button type="button" id="unitProj" aria-pressed="false">Author</button>
+      </div>
+      <span class="muted" id="unitHint">Each public page counts as 1</span>
+    </div>
+
+    <section class="kpis" aria-label="Key metrics">
+      <article class="kpi"><h3>Public projects</h3><div class="num" id="kWorks">0</div><div class="sub" id="kWorksSub"></div></article>
+      <article class="kpi"><h3>Publishing accounts</h3><div class="num" id="kAuthors">0</div><div class="sub" id="kAuthorsSub"></div></article>
+      <article class="kpi"><h3>New this month</h3><div class="num" id="kNew">0</div><div class="sub" id="kNewSub"></div>
+        <button class="link" type="button" id="jumpMonth">Show this month only →</button></article>
+      <article class="kpi"><h3>Median views</h3><div class="num" id="kMedian">0</div><div class="sub" id="kMedianSub"></div></article>
+      <article class="kpi dashed"><h3>Used in classrooms <span class="chip">Manual · 11-17</span></h3><div class="num"><small>≥ </small><span id="kRooms">0</span></div><div class="sub" id="kRoomsSub"></div></article>
+      <article class="kpi warn"><h3>Unclassified <span class="chip">Action needed</span></h3><div class="num" id="kTodo">0</div><div class="sub">Purpose not yet marked as research or teaching</div>
+        <button class="link" type="button" id="jumpTodo">Filter unclassified →</button></article>
+    </section>
+
+    <section class="coverage" aria-label="Platform coverage">
+      <div><h3>PLATFORM COVERAGE</h3><p id="covText"></p></div>
+      <div><div class="bar" id="covBar"></div><div class="legend" id="covLegend"></div></div>
+    </section>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-timeline" aria-controls="timeline" aria-selected="true">Timeline</button>
+    <button role="tab" id="tab-pages" aria-controls="pages" aria-selected="false">All public pages</button>
+    <button role="tab" id="tab-inventory" aria-controls="inventory" aria-selected="false">Site feature inventory</button>
+  </div>
+
+  <div class="datebar" aria-label="Filter by date">
+    <strong>Filter by date</strong>
+    <div class="seg" role="group" aria-label="Quick ranges">
+      <button type="button" data-range="all" aria-pressed="true">All</button>
+      <button type="button" data-range="7" aria-pressed="false">Last 7 days</button>
+      <button type="button" data-range="month" aria-pressed="false">This month</button>
+      <button type="button" data-range="30" aria-pressed="false">Last 30 days</button>
+    </div>
+    <label for="dFrom">From</label><input type="date" id="dFrom">
+    <label for="dTo">To</label><input type="date" id="dTo">
+    <span class="muted" id="dateCount"></span>
+  </div>
+
+  <section class="panel" id="timeline" role="tabpanel" aria-labelledby="tab-timeline">
+    <ol class="tl" id="tlList"></ol>
+  </section>
+
+  <section class="panel" id="pages" role="tabpanel" aria-labelledby="tab-pages" hidden>
+    <div class="cards" id="cardGrid"></div>
+  </section>
+
+  <section class="panel" id="inventory" role="tabpanel" aria-labelledby="tab-inventory" hidden>
+    <div class="inv-head">
+      <div>
+        <h2>tmun.ai Site Feature Inventory</h2>
+        <p class="muted">Every public project, listed as input for planning the nursing education AI platform. Showing <b id="invCount">0</b></p>
+      </div>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Search project, author, feature…" aria-label="Search">
+        <select id="fCat" aria-label="Filter by category"><option value="">Category: all</option></select>
+        <select id="fAI" aria-label="Filter by AI"><option value="">AI: all</option><option value="Yes">Has AI</option><option value="No">No AI</option></select>
+        <select id="fUse" aria-label="Filter by purpose"><option value="">Purpose: all</option><option>Teaching</option><option>Research</option><option>Research + Teaching</option><option>Unclassified</option></select>
+        <button class="btn" type="button" id="copyCsv">Copy as CSV</button>
+      </div>
+    </div>
+    <div class="notice">⚠︎ <span>The rows below are <b>sample data</b> written around tmun.ai's project categories. They do not describe real projects or authors yet. To use real data, edit the <code>PROJECTS</code> list in the page source; the metric cards, timeline, project cards and category chart all update automatically.</span></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Project</th><th>Author</th><th>Features</th><th>Audience</th><th>AI features</th><th>Research / teaching</th><th>Link</th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+    <textarea class="copy-out" id="csvOut" hidden readonly aria-label="CSV content"></textarea>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="kicker">ABOUT</div>
+    <h2>About the platform</h2>
+    <p>tmun.ai is a platform for building, publishing and showcasing web apps with AI. Its focus is AI-assisted web development, medical education, interactive teaching and project publishing. Public projects cover medical education, clinical training, pharmacy management, nursing administration, research statistics, interactive learning and AI teaching tools.</p>
+    <div class="grid2">
+      <div class="box">
+        <h3>Site structure</h3>
+        <dl class="deflist">
+          <dt>Timeline</dt><dd>Published projects in date order (home page)</dd>
+          <dt>All public pages</dt><dd>Browse every public project, with thumbnail, author and view count</dd>
+          <dt>Store</dt><dd>Skills and app recipes for AI agents</dd>
+          <dt>About</dt><dd>Platform introduction</dd>
+          <dt>LINE Bot</dt><dd>LINE chatbot service (line.tmun.ai)</dd>
+          <dt>Sign in</dt><dd>User sign-in (invitation only)</dd>
+          <dt>Projects dashboard</dt><dd>Pinned summary of public projects, authors and views; can be collapsed</dd>
+          <dt>Creator portfolios</dt><dd>Each creator's own web projects</dd>
+        </dl>
+      </div>
+      <div class="box">
+        <h3>Project categories <span class="muted" style="font-size:12px;font-weight:500">(from sample data)</span></h3>
+        <div class="cats" id="catList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="features">
+    <div class="kicker">AI & TECH</div>
+    <h2>AI and technical features</h2>
+    <p>What the platform supports, as a checklist for planning the nursing education AI platform.</p>
+    <div class="feat">
+      <div class="box"><h3><span class="ico">10</span>Single-page HTML hosting</h3><p>Upload HTML pages up to 10 MB</p></div>
+      <div class="box"><h3><span class="ico">AI</span>Claude AI collaboration</h3><p>Build and publish with Claude Cowork, Design and Code</p></div>
+      <div class="box"><h3><span class="ico">≋</span>AI chat agents</h3><p>Embed AI conversations in a page</p></div>
+      <div class="box"><h3><span class="ico">⇄</span>Real-time multiplayer</h3><p>Live connections, shared cursors, game messages</p></div>
+      <div class="box"><h3><span class="ico">⌂</span>Online classroom</h3><p>Student sign-in, submissions, peer viewing</p></div>
+      <div class="box"><h3><span class="ico">♪</span>AI media</h3><p>Generated text, speech, images, video and music</p></div>
+      <div class="box"><h3><span class="ico">Rx</span>Medical literature search</h3><p>Supports research and literature-based apps</p></div>
+      <div class="box"><h3><span class="ico">API</span>API publishing</h3><p>AI agents upload and update pages through the API</p></div>
+    </div>
+    <div class="policy"><b>Invitation only.</b> There is no traditional on-site page editor; content is created and updated mainly by AI agents.</div>
+  </section>
+
+  <section class="sec" id="store">
+    <div class="kicker">STORE</div>
+    <h2>Store skills and tools</h2>
+    <p>Skills and app recipes that AI agents can use.</p>
+    <div class="store">
+      <div class="box"><h3><small>RESEARCH</small>Academic research</h3><ul><li>Deep literature research</li><li>Finding research directions</li><li>Academic paper writing</li></ul></div>
+      <div class="box"><h3><small>TEACHING</small>Instructional design</h3><ul><li>Class setup</li><li>Student quiz and feedback pages</li><li>Slide decks</li></ul></div>
+      <div class="box"><h3><small>DATA</small>Data analysis</h3><ul><li>Interactive Excel dashboards</li><li>Live Google Sheets dashboards</li></ul></div>
+      <div class="box"><h3><small>ADMIN</small>Administration</h3><ul><li>Official document drafting</li><li>Internal system search</li></ul></div>
+      <div class="box"><h3><small>OTHER</small>Other tools</h3><ul><li>Web design</li><li>On-device speech-to-text</li><li>Bilingual slide teleprompter</li></ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 tmun.ai · Nursing education AI platform planning · Sample data for layout only</span>
+    <nav aria-label="Footer">
+      <a href="https://tmun.ai/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+      <a href="https://tmun.ai/terms" target="_blank" rel="noopener">Terms of Service</a>
+      <a href="https://tmun.ai/llms.txt" target="_blank" rel="noopener">llms.txt</a>
+    </nav>
+  </footer>
+</div>
+
+<div class="overlay" id="signinBox" hidden>
+  <form class="modal" id="signinForm" aria-labelledby="siTitle">
+    <h3 id="siTitle">Sign in to tmun.ai</h3>
+    <div class="muted" style="font-size:13px">tmun.ai is invitation only. Sign in with the account you were invited with.</div>
+    <label for="siEmail">Email</label><input id="siEmail" type="email" autocomplete="off" placeholder="name@example.edu">
+    <div class="msg" id="siMsg" hidden>This is a layout mock-up; sign-in is not connected yet.</div>
+    <button class="btn" type="button" id="siAdmin" style="margin-top:14px;width:100%">Open admin (demo)</button>
+    <div class="acts"><button class="btn" type="button" id="siClose">Close</button><button class="btn solid" type="submit">Send sign-in link</button></div>
+  </form>
+</div>
+
+</template>
+
 <script>
+function initZH(signal){
 /* ============================================================
    ★ 範例資料：請在這裡修改成 tmun.ai 真實公開專案 ★
    name 專案名稱 / author 作者 / cat 主題分類 / feature 功能 / audience 使用對象
@@ -542,6 +867,11 @@ const CATS = {
   "研究統計":"#7b6f8c",
 };
 const PROJECTS = [
+  {name:"MetaNurse 護理元宇宙", author:"Angela", cat:"護理教育", feature:"互動式 3D 元宇宙醫院，模擬病人安全臨床情境並追蹤自主學習（SRL）歷程", audience:["護理系學生","新進護理師"], ai:"有", use:"研究＋教學", url:"https://metanurse.ai.studio/", date:"2026-11-25", views:0, access:"公開", rooms:0},
+  {name:"產房 NET 臨床模擬", author:"Angela", cat:"互動學習與遊戲", feature:"產房情境的臨床判斷與處置模擬遊戲", audience:["護理系學生","新進護理師"], ai:"無", use:"教學", url:"https://claude.ai/artifact/N5n6276t4Y9d5a2awJAWGW", date:"2026-11-25", views:0, access:"公開", rooms:0},
+  {name:"產房值班模擬", author:"Angela", cat:"互動學習與遊戲", feature:"扮演產房值班護理師，依序處理待產婦的照護任務", audience:["護理系學生","新進護理師"], ai:"無", use:"教學", url:"https://claude.ai/artifact/NJrtqPEd3UAwequgDCEjrx", date:"2026-11-25", views:0, access:"公開", rooms:0},
+  {name:"AI-MedCare 藥物辨識", author:"Angela", cat:"藥事管理", feature:"拍照辨識藥物外觀並提供用藥衛教，分一般民眾版與醫護版", audience:["病人與家屬","護理師"], ai:"有", use:"教學", url:"https://changfrinng.github.io/ai-medcare/#scan", date:"2026-11-25", views:0, access:"公開", rooms:0},
+  {name:"經文尋光", author:"Angela", cat:"互動學習與遊戲", feature:"經文與詩歌的探索小遊戲", audience:["一般大眾"], ai:"無", use:"待分類", url:"https://changfrinng.github.io/bible-game/", date:"2026-11-25", views:0, access:"公開", rooms:0},
   {name:"PGY 臨床工作坊平台", author:"林醫師（範例）", cat:"醫學教育與臨床訓練", feature:"工作坊報名、課程講義與課後回饋表單", audience:["PGY 醫師","臨床教師"], ai:"無", use:"教學", url:"https://tmun.ai/p/pgy-workshop", date:"2026-11-03", views:612, access:"公開", rooms:4},
   {name:"CBME 里程碑評量儀表板", author:"黃老師（範例）", cat:"醫學教育與臨床訓練", feature:"依能力導向醫學教育（CBME）里程碑追蹤學員進度", audience:["臨床教師","教學部"], ai:"有", use:"研究＋教學", url:"https://tmun.ai/p/cbme-milestone", date:"2026-10-24", views:338, access:"會員限定", rooms:3},
   {name:"醫病溝通 AI 對練", author:"陳老師（範例）", cat:"醫學教育與臨床訓練", feature:"與 AI 扮演的病人練習告知壞消息與共享決策", audience:["UGY 醫學生","PGY 醫師"], ai:"有", use:"教學", url:"https://tmun.ai/p/sp-communication", date:"2026-11-19", views:874, access:"公開", rooms:6},
@@ -559,7 +889,7 @@ const PROJECTS = [
   {name:"護理文獻快速檢索", author:"孫研究員（範例）", cat:"研究統計", feature:"以 PICO 架構檢索醫學文獻並整理證據等級", audience:["研究生","護理師"], ai:"有", use:"研究", url:"https://tmun.ai/p/ebn-search", date:"2026-11-21", views:98, access:"公開", rooms:0},
   {name:"病房 QR 衛教牆", author:"何護理師（範例）", cat:"護理教育", feature:"病房張貼 QR code，連結到對應疾病衛教頁", audience:["病人與家屬"], ai:"無", use:"待分類", url:"https://tmun.ai/p/qr-edu", date:"2026-10-08", views:143, access:"公開", rooms:1},
 ];
-const TODAY = "2026-11-22", WEEK_AGO = "2026-11-15", MONTH = TODAY.slice(0,7);
+const TODAY = "2026-11-25", WEEK_AGO = "2026-11-18", MONTH = TODAY.slice(0,7);
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -575,14 +905,14 @@ function addDays(d,n){const x=new Date(d+"T00:00:00");x.setDate(x.getDate()+n);r
   const paint=()=>{btn.textContent=isDark()?"☀":"☾";};
   const saved=store.get("tmun-theme"); if(saved) root.dataset.theme=saved; paint();
   btn.addEventListener("click",()=>{const t=isDark()?"light":"dark"; root.dataset.theme=t; store.set("tmun-theme",t); paint();});
-  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",paint);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",paint,{signal});
 
   const mb=$("#menuBtn"), menu=$("#menu");
   const setMenu=open=>{menu.hidden=!open; mb.setAttribute("aria-expanded",open); mb.textContent=open?"✕":"☰";};
   mb.addEventListener("click",e=>{e.stopPropagation(); setMenu(menu.hidden);});
-  document.addEventListener("click",e=>{if(!menu.hidden && !menu.contains(e.target)) setMenu(false);});
+  document.addEventListener("click",e=>{if(!menu.hidden && !menu.contains(e.target)) setMenu(false);},{signal});
   menu.addEventListener("click",e=>{if(e.target.closest("a")) setMenu(false);});
-  addEventListener("keydown",e=>{if(e.key==="Escape"){setMenu(false); $("#signinBox").hidden=true;}});
+  addEventListener("keydown",e=>{if(e.key==="Escape"){setMenu(false); $("#signinBox").hidden=true;}},{signal});
 
   const cb=$("#collapseBtn"), body=$("#dashBody");
   const setCol=c=>{body.hidden=c; cb.setAttribute("aria-expanded",!c); cb.textContent=c?"展開 ▼":"收起 ▲"; store.set("tmun-collapsed",c?"1":"0");};
@@ -700,7 +1030,7 @@ function selectTab(id){
 }
 document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener("click",()=>{const id=t.getAttribute("aria-controls");selectTab(id);try{history.replaceState(null,"","#"+id)}catch(e){}}));
 function route(){const h=location.hash.slice(1); if(TABS.includes(h)){selectTab(h);}}
-addEventListener("hashchange",route); route();
+addEventListener("hashchange",route,{signal}); route();
 
 $("#jumpMonth").addEventListener("click",()=>{setRange("month");selectTab("timeline");$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
 $("#jumpTodo").addEventListener("click",()=>{selectTab("inventory");$("#fUse").value="待分類";renderTable();$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
@@ -740,7 +1070,7 @@ $("#copyCsv").addEventListener("click",()=>{
   const cv=document.getElementById("bandCanvas"), ctx=cv.getContext("2d");
   let W=0,H=0;
   function resize(){const dpr=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
-  resize(); addEventListener("resize",resize);
+  resize(); addEventListener("resize",resize,{signal});
   const colors=["#e0507f","#f8a9c6","#b89ae8","#e3a645","#c06bd8","#ff8fb8"];
   const parts=[]; for(let i=0;i<70;i++) parts.push({x:Math.random(),y:Math.random(),s:2+Math.random()*5,v:.0006+Math.random()*.0012,c:colors[i%colors.length]});
   function ecgY(t){ if(t<.10)return 0; if(t<.16)return -.12*Math.sin((t-.10)/.06*Math.PI); if(t<.20)return 0; if(t<.22)return .15; if(t<.26)return -1; if(t<.29)return .45; if(t<.32)return 0; if(t<.46)return -.22*Math.sin((t-.32)/.14*Math.PI); return 0; }
@@ -775,13 +1105,493 @@ $("#copyCsv").addEventListener("click",()=>{
     const lastPh=((((xE1-ex0)-shift)%period)+period)%period/period, beat=reduce?0:Math.max(0,1-Math.abs(lastPh-.25)*8), hs=Math.min(H*.26,30)*(1+beat*.22);
     ctx.save(); ctx.shadowColor="rgba(224,80,127,.7)"; ctx.shadowBlur=14+beat*16; heart(xH,mid+hs*.2,hs);
     const hg=ctx.createLinearGradient(xH,mid-hs,xH,mid+hs); hg.addColorStop(0,"#ff7aa8"); hg.addColorStop(1,"#d22f68"); ctx.fillStyle=hg; ctx.fill(); ctx.restore();
-    if(!reduce) requestAnimationFrame(draw);
+    if(!reduce && !signal.aborted) requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
   $("#collapseBtn").addEventListener("click",()=>{ if(!$("#dashBody").hidden){ resize(); if(reduce) requestAnimationFrame(draw);} });
 })();
 
+window.__TMUN={P:PROJECTS,CATS};
 renderKpis(); renderCoverage(); renderCats(); refresh();
+
+}
+function initEN(signal){
+/* ============================================================
+   ★ SAMPLE DATA: replace with real tmun.ai public projects ★
+   name / author / cat (category) / feature / audience (list)
+   ai "Yes"/"No" / use "Teaching"/"Research"/"Research + Teaching"/"Unclassified"
+   url / date (published) / views / access "Public"/"Members only"/"Classroom" / rooms (classes using it)
+   ============================================================ */
+const CATS = {
+  "Medical Education & Clinical Training":"#e0507f",
+  "Nursing Education":"#c06bd8",
+  "Interactive Learning & Games":"#3fb59a",
+  "AI Reflection Scaffolding":"#8f7ae0",
+  "Diabetes Education":"#e3a645",
+  "AI Co-created Lesson Plans":"#f06a98",
+  "Pharmacy Management":"#4b9ce0",
+  "Research Statistics":"#7b6f8c",
+};
+const SHORT = {"Medical Education & Clinical Training":"Medical Ed","Nursing Education":"Nursing Ed","Interactive Learning & Games":"Games","AI Reflection Scaffolding":"AI Reflection","Diabetes Education":"Diabetes Ed","AI Co-created Lesson Plans":"AI Lesson Plans","Pharmacy Management":"Pharmacy"};
+const PROJECTS = [
+  {name:"MetaNurse Nursing Metaverse", author:"Angela", cat:"Nursing Education", feature:"Interactive 3D metaverse hospital for patient-safety clinical simulation with self-regulated learning (SRL) tracking", audience:["Nursing students","New graduate nurses"], ai:"Yes", use:"Research + Teaching", url:"https://metanurse.ai.studio/", date:"2026-11-25", views:0, access:"Public", rooms:0},
+  {name:"Delivery Room NET Clinical Simulation", author:"Angela", cat:"Interactive Learning & Games", feature:"Simulation game for clinical judgment and care in delivery-room scenarios", audience:["Nursing students","New graduate nurses"], ai:"No", use:"Teaching", url:"https://claude.ai/artifact/N5n6276t4Y9d5a2awJAWGW", date:"2026-11-25", views:0, access:"Public", rooms:0},
+  {name:"Delivery Room Shift Simulation", author:"Angela", cat:"Interactive Learning & Games", feature:"Play the on-duty delivery-room nurse and work through care tasks for women in labor", audience:["Nursing students","New graduate nurses"], ai:"No", use:"Teaching", url:"https://claude.ai/artifact/NJrtqPEd3UAwequgDCEjrx", date:"2026-11-25", views:0, access:"Public", rooms:0},
+  {name:"AI-MedCare Drug Recognition", author:"Angela", cat:"Pharmacy Management", feature:"Identify medications from a photo and get medication education, with public and clinician versions", audience:["Patients and families","Nurses"], ai:"Yes", use:"Teaching", url:"https://changfrinng.github.io/ai-medcare/#scan", date:"2026-11-25", views:0, access:"Public", rooms:0},
+  {name:"Scripture Light Quest", author:"Angela", cat:"Interactive Learning & Games", feature:"A small game for exploring scripture and hymns", audience:["General public"], ai:"No", use:"Unclassified", url:"https://changfrinng.github.io/bible-game/", date:"2026-11-25", views:0, access:"Public", rooms:0},
+  {name:"PGY Clinical Workshop Hub", author:"Dr. Lin (sample)", cat:"Medical Education & Clinical Training", feature:"Workshop sign-up, course handouts and post-session feedback forms", audience:["PGY residents","Clinical teachers"], ai:"No", use:"Teaching", url:"https://tmun.ai/p/pgy-workshop", date:"2026-11-03", views:612, access:"Public", rooms:4},
+  {name:"CBME Milestone Dashboard", author:"Prof. Huang (sample)", cat:"Medical Education & Clinical Training", feature:"Tracks learner progress against competency-based medical education (CBME) milestones", audience:["Clinical teachers","Education office"], ai:"Yes", use:"Research + Teaching", url:"https://tmun.ai/p/cbme-milestone", date:"2026-10-24", views:338, access:"Members only", rooms:3},
+  {name:"AI Patient Communication Practice", author:"Prof. Chen (sample)", cat:"Medical Education & Clinical Training", feature:"Practice breaking bad news and shared decision-making with an AI-played patient", audience:["UGY medical students","PGY residents"], ai:"Yes", use:"Teaching", url:"https://tmun.ai/p/sp-communication", date:"2026-11-19", views:874, access:"Public", rooms:6},
+  {name:"AI Virtual Patient: Nursing Assessment", author:"Prof. Wang (sample)", cat:"Nursing Education", feature:"Interview an AI virtual patient to practise nursing assessment and SBAR handoff", audience:["Nursing students"], ai:"Yes", use:"Teaching", url:"https://tmun.ai/p/vp-nursing", date:"2026-11-12", views:1046, access:"Public", rooms:9},
+  {name:"ADPIE Clinical Reasoning Trainer", author:"Prof. Chang (sample)", cat:"Nursing Education", feature:"Step through Assess, Diagnose, Plan, Implement, Evaluate with instant AI feedback", audience:["Nursing students","New graduate nurses"], ai:"Yes", use:"Teaching", url:"https://tmun.ai/p/adpie", date:"2026-11-07", views:533, access:"Public", rooms:5},
+  {name:"Obstetric Nursing Interactive Module", author:"Prof. Tsai (sample)", cat:"Nursing Education", feature:"Partograph, fetal heart rate reading and case questions", audience:["Nursing students"], ai:"No", use:"Teaching", url:"https://tmun.ai/p/ob-nursing", date:"2026-10-18", views:402, access:"Classroom", rooms:2},
+  {name:"Nursing Administration Scheduling Sim", author:"Head Nurse Lee (sample)", cat:"Nursing Education", feature:"Simulates ward staffing and checks shift-scheduling rules", audience:["Nurse managers","Nursing students"], ai:"No", use:"Unclassified", url:"https://tmun.ai/p/nursing-admin", date:"2026-11-20", views:121, access:"Members only", rooms:1},
+  {name:"Care Scenario Game Map", author:"Prof. Wu (sample)", cat:"Interactive Learning & Games", feature:"Multiplayer quest: complete care tasks on a ward map", audience:["Nursing students","Medical students"], ai:"No", use:"Teaching", url:"https://tmun.ai/p/care-map", date:"2026-11-15", views:689, access:"Public", rooms:7},
+  {name:"SEL Care Reflection Cards", author:"Prof. Hsu (sample)", cat:"Interactive Learning & Games", feature:"Social-emotional learning (SEL) scenario cards for group reflection", audience:["Nursing students"], ai:"No", use:"Unclassified", url:"https://tmun.ai/p/sel-cards", date:"2026-10-29", views:187, access:"Public", rooms:2},
+  {name:"AI Reflection Journal", author:"Prof. Chou (sample)", cat:"AI Reflection Scaffolding", feature:"Students write clinical placement reflections; AI gives instant feedback using Gibbs' cycle and keeps a learning record", audience:["Nursing students","Clinical instructors"], ai:"Yes", use:"Research + Teaching", url:"https://tmun.ai/p/reflection", date:"2026-11-10", views:458, access:"Classroom", rooms:4},
+  {name:"Diabetes Education Module", author:"Educator Cheng (sample)", cat:"Diabetes Education", feature:"Lessons, pre/post tests, AI Q&A and learning-outcome analysis", audience:["Patients and families","Diabetes educators"], ai:"Yes", use:"Research + Teaching", url:"https://tmun.ai/p/dm-edu", date:"2026-11-05", views:731, access:"Public", rooms:3},
+  {name:"AI Lesson Plan Builder", author:"Prof. Yang (sample)", cat:"AI Co-created Lesson Plans", feature:"Enter course goals; AI drafts the lesson plan, activities and rubric", audience:["Teachers"], ai:"Yes", use:"Teaching", url:"https://tmun.ai/p/lesson-plan", date:"2026-11-17", views:295, access:"Public", rooms:0},
+  {name:"High-Alert Medication Drill", author:"Pharmacist Liu (sample)", cat:"Pharmacy Management", feature:"Quiz on high-alert and look-alike medications", audience:["Pharmacy students","Nurses"], ai:"No", use:"Teaching", url:"https://tmun.ai/p/high-alert", date:"2026-10-12", views:264, access:"Public", rooms:2},
+  {name:"Research Statistics Helper", author:"Dr. Chao (sample)", cat:"Research Statistics", feature:"Upload data; AI suggests a statistical method and explains the results", audience:["Graduate students","Clinical researchers"], ai:"Yes", use:"Research", url:"https://tmun.ai/p/stats-helper", date:"2026-10-27", views:352, access:"Members only", rooms:0},
+  {name:"Nursing Literature Quick Search", author:"Dr. Sun (sample)", cat:"Research Statistics", feature:"Search medical literature with PICO and summarise the level of evidence", audience:["Graduate students","Nurses"], ai:"Yes", use:"Research", url:"https://tmun.ai/p/ebn-search", date:"2026-11-21", views:98, access:"Public", rooms:0},
+  {name:"Ward QR Health Education Wall", author:"Nurse Ho (sample)", cat:"Nursing Education", feature:"QR codes posted on the ward link to education pages for each condition", audience:["Patients and families"], ai:"No", use:"Unclassified", url:"https://tmun.ai/p/qr-edu", date:"2026-10-08", views:143, access:"Public", rooms:1},
+];
+const TODAY = "2026-11-25", WEEK_AGO = "2026-11-18", MONTH = TODAY.slice(0,7);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const useClass = u => u==="Teaching"?"teach":u==="Research"?"research":u==="Research + Teaching"?"both":"todo";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = { get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+function addDays(d,n){const x=new Date(d+"T00:00:00");x.setDate(x.getDate()+n);return x.toISOString().slice(0,10);}
+const plural=(n,w)=>`${n} ${w}${n===1?"":"s"}`;
+
+/* ---------- theme / menu / collapse / sign-in ---------- */
+(function ui(){
+  const root=document.documentElement, btn=$("#themeBtn");
+  const isDark=()=>root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  const paint=()=>{btn.textContent=isDark()?"☀":"☾";};
+  const saved=store.get("tmun-theme"); if(saved) root.dataset.theme=saved; paint();
+  btn.addEventListener("click",()=>{const t=isDark()?"light":"dark"; root.dataset.theme=t; store.set("tmun-theme",t); paint();});
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",paint,{signal});
+
+  const mb=$("#menuBtn"), menu=$("#menu");
+  const setMenu=open=>{menu.hidden=!open; mb.setAttribute("aria-expanded",open); mb.textContent=open?"✕":"☰";};
+  mb.addEventListener("click",e=>{e.stopPropagation(); setMenu(menu.hidden);});
+  document.addEventListener("click",e=>{if(!menu.hidden && !menu.contains(e.target)) setMenu(false);},{signal});
+  menu.addEventListener("click",e=>{if(e.target.closest("a")) setMenu(false);});
+  addEventListener("keydown",e=>{if(e.key==="Escape"){setMenu(false); $("#signinBox").hidden=true;}},{signal});
+
+  const cb=$("#collapseBtn"), body=$("#dashBody");
+  const setCol=c=>{body.hidden=c; cb.setAttribute("aria-expanded",!c); cb.textContent=c?"Expand ▼":"Collapse ▲"; store.set("tmun-collapsed",c?"1":"0");};
+  if(store.get("tmun-collapsed")==="1") setCol(true);
+  cb.addEventListener("click",()=>setCol(!body.hidden));
+
+  document.querySelectorAll("[data-signin]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault(); $("#siMsg").hidden=true; $("#signinBox").hidden=false; $("#siEmail").focus();}));
+  $("#siClose").addEventListener("click",()=>$("#signinBox").hidden=true);
+  $("#signinBox").addEventListener("click",e=>{if(e.target.id==="signinBox") e.currentTarget.hidden=true;});
+  $("#signinForm").addEventListener("submit",e=>{e.preventDefault(); $("#siMsg").hidden=false;});
+})();
+
+/* ---------- metrics ---------- */
+let unit="work";
+function median(a){const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length?(s.length%2?s[m]:Math.round((s[m-1]+s[m])/2)):0;}
+function countUp(el,to){ if(reduce){el.textContent=to.toLocaleString("en-US");return;} const t0=performance.now(),d=900;
+  (function step(t){const p=Math.min(1,(t-t0)/d);el.textContent=Math.round(to*(1-Math.pow(1-p,3))).toLocaleString("en-US");if(p<1)requestAnimationFrame(step);})(t0);}
+function renderKpis(){
+  const authors=[...new Set(PROJECTS.map(p=>p.author))];
+  const views=PROJECTS.map(p=>p.views), sum=views.reduce((a,b)=>a+b,0);
+  countUp($("#kWorks"), unit==="work"?PROJECTS.length:authors.length);
+  $("#kWorksSub").innerHTML = unit==="work" ? `vs. 7 days ago (${WEEK_AGO.slice(5)}) <b>+${PROJECTS.filter(p=>p.date>WEEK_AGO).length}</b>` : "Counted by author";
+  countUp($("#kAuthors"), authors.length);
+  $("#kAuthorsSub").innerHTML=`Average <b>${(PROJECTS.length/authors.length).toFixed(1)}</b> projects each`;
+  countUp($("#kNew"), PROJECTS.filter(p=>p.date.startsWith(MONTH)).length);
+  $("#kNewSub").innerHTML=`Tracked since <b>${MONTH}-01</b>`;
+  countUp($("#kMedian"), median(views));
+  $("#kMedianSub").innerHTML=`<b>${sum.toLocaleString("en-US")}</b> views in total; the top project has <b>${Math.round(Math.max(...views)/sum*100)}%</b>`;
+  countUp($("#kRooms"), PROJECTS.filter(p=>p.rooms>0).length);
+  $("#kRoomsSub").innerHTML=`Projects used in <b>${PROJECTS.reduce((a,p)=>a+p.rooms,0)}</b> classes · ${PROJECTS.filter(p=>!p.rooms).length} not yet used`;
+  countUp($("#kTodo"), PROJECTS.filter(p=>p.use==="Unclassified").length);
+  $("#unitHint").textContent = unit==="work"?"Each public page counts as 1":"Each publishing author counts as 1";
+}
+function renderCoverage(){
+  const g=[["Public","#e0507f"],["Members only","#e3a645"],["Classroom","#b89ae8"]], n=PROJECTS.length;
+  const c=g.map(([k])=>PROJECTS.filter(p=>p.access===k).length), ai=PROJECTS.filter(p=>p.ai==="Yes").length;
+  $("#covText").innerHTML=`<b>${n}</b> projects site-wide: public <b>${c[0]}</b> (${Math.round(c[0]/n*100)}%) · members only <b>${c[1]}</b> · classroom <b>${c[2]}</b>. <b>${ai}</b> have AI features (${Math.round(ai/n*100)}%).`;
+  $("#covBar").innerHTML=g.map(([k,col],i)=>`<i style="flex-grow:${c[i]};background:${col}" title="${k} ${c[i]}"></i>`).join("");
+  $("#covLegend").innerHTML=g.map(([k,col],i)=>`<span><i style="background:${col}"></i>${k} <b>${c[i]}</b></span>`).join("");
+}
+function renderCats(){
+  const max=Math.max(...Object.keys(CATS).map(k=>PROJECTS.filter(p=>p.cat===k).length));
+  $("#catList").innerHTML=Object.entries(CATS).map(([k,col])=>{const ps=PROJECTS.filter(p=>p.cat===k);
+    return `<div class="c"><span class="t">${k}</span><span class="meter"><i style="width:${ps.length/max*100}%;background:${col}"></i></span><span class="n">${ps.length}</span><span class="ex">${ps.map(p=>esc(p.name)).join(" · ")}</span></div>`;}).join("");
+  $("#fCat").innerHTML='<option value="">Category: all</option>'+Object.keys(CATS).map(k=>`<option>${k}</option>`).join("");
+  $("#heroTags").innerHTML=Object.entries(CATS).slice(0,6).map(([k,col])=>`<button type="button" class="tag" style="background:${col}" data-cat="${k}">${SHORT[k]||k}</button>`).join("");
+  document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{$("#fCat").value=b.dataset.cat;selectTab("inventory");refresh();$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});}));
+}
+
+/* ---------- thumbnails (generated from category colour) ---------- */
+let THUMB_N=0;
+function thumb(p,i){
+  const uid="tg"+(THUMB_N++);
+  const c=CATS[p.cat]||"#e0507f", s=(i*37)%5;
+  const blocks = s%2 ? `<rect x="14" y="40" width="70" height="60" rx="6" fill="#fff" opacity=".85"/><rect x="92" y="40" width="94" height="26" rx="6" fill="#fff" opacity=".6"/><rect x="92" y="74" width="94" height="26" rx="6" fill="#fff" opacity=".6"/>`
+    : `<rect x="14" y="40" width="172" height="30" rx="6" fill="#fff" opacity=".8"/><rect x="14" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/><rect x="74" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/><rect x="134" y="78" width="52" height="22" rx="6" fill="#fff" opacity=".6"/>`;
+  return `<svg class="thumb" viewBox="0 0 200 125" role="img" aria-label="${esc(p.name)} thumbnail"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="#f8a9c6"/></linearGradient></defs>
+    <rect width="200" height="125" fill="url(#${uid})"/><rect x="0" y="0" width="200" height="26" fill="#fff" opacity=".9"/>
+    <circle cx="14" cy="13" r="4" fill="${c}"/><rect x="24" y="9" width="${50+s*12}" height="8" rx="4" fill="${c}" opacity=".7"/>${blocks}
+    ${p.ai==="Yes"?`<g transform="translate(170 112)"><polygon points="0,-11 10,-5.5 10,5.5 0,11 -10,5.5 -10,-5.5" fill="#4a1f36"/><text y="3.5" text-anchor="middle" font-size="9" font-weight="800" fill="#fff" font-family="sans-serif">AI</text></g>`:""}</svg>`;
+}
+
+/* ---------- filters and lists ---------- */
+let range={from:"",to:""};
+function inDate(p){return (!range.from||p.date>=range.from)&&(!range.to||p.date<=range.to);}
+function filtered(){
+  const q=$("#q").value.trim().toLowerCase(), a=$("#fAI").value, u=$("#fUse").value, c=$("#fCat").value;
+  return PROJECTS.filter(p=>inDate(p)&&(!a||p.ai===a)&&(!u||p.use===u)&&(!c||p.cat===c)&&(!q||[p.name,p.author,p.feature,p.cat,p.audience.join(" ")].join(" ").toLowerCase().includes(q)));
+}
+const aiBadge=p=>`<span class="${p.ai==="Yes"?"ai-yes":"ai-no"}">${p.ai==="Yes"?"AI":"No AI"}</span>`;
+const urlText=p=>esc(p.url.replace("https://",""));
+function renderTable(){
+  const rows=filtered(); $("#invCount").textContent=rows.length;
+  $("#invBody").innerHTML=rows.length?rows.map((p,i)=>`<tr>
+    <td class="no">${String(i+1).padStart(2,"0")}</td>
+    <td><div class="name">${esc(p.name)}</div><div class="cat" style="color:${CATS[p.cat]}">${esc(p.cat)}</div><div class="no">Published ${p.date} · ${p.access} · ${p.views.toLocaleString("en-US")} views</div></td>
+    <td>${esc(p.author)}</td><td>${esc(p.feature)}</td>
+    <td><div class="aud">${p.audience.map(x=>`<span>${esc(x)}</span>`).join("")}</div></td>
+    <td>${aiBadge(p)}</td><td><span class="use ${useClass(p.use)}">${esc(p.use)}</span></td>
+    <td><a href="${esc(p.url)}" target="_blank" rel="noopener">${urlText(p)}</a></td></tr>`).join("")
+    :`<tr><td colspan="8" class="empty">No projects match. Try a different search, category or date range.</td></tr>`;
+}
+function renderTimeline(){
+  const s=PROJECTS.map((p,i)=>[p,i]).filter(([p])=>inDate(p)).sort((a,b)=>b[0].date.localeCompare(a[0].date));
+  $("#tlList").innerHTML=s.length?s.map(([p,i])=>`<li>${thumb(p,i)}<div><time>${p.date}${p.date.startsWith(MONTH)?" · New this month":""}</time><h4>${esc(p.name)}</h4>
+    <div class="info">${esc(p.author)} · <b>${p.views.toLocaleString("en-US")}</b> views · <span style="color:${CATS[p.cat]};font-weight:700">${esc(p.cat)}</span></div><div class="info">${esc(p.feature)}</div></div></li>`).join("")
+    :`<li><div class="empty" style="grid-column:1/-1">No projects were published in this period.</div></li>`;
+}
+function renderCards(){
+  const s=PROJECTS.map((p,i)=>[p,i]).filter(([p])=>inDate(p)).sort((a,b)=>b[0].views-a[0].views);
+  $("#cardGrid").innerHTML=s.length?s.map(([p,i])=>`<article class="card">${thumb(p,i)}<div class="body"><h4>${esc(p.name)}</h4>
+    <div class="by"><span>${esc(p.author)}</span><span class="views">👁 ${p.views.toLocaleString("en-US")}</span></div>
+    <div class="no">Published ${p.date}</div>
+    <div class="row">${aiBadge(p)}<span class="use ${useClass(p.use)}">${esc(p.use)}</span></div>
+    <a class="url" href="${esc(p.url)}" target="_blank" rel="noopener">${urlText(p)}</a></div></article>`).join("")
+    :`<div class="empty">No public pages in this period.</div>`;
+}
+function refresh(){ renderTable(); renderTimeline(); renderCards();
+  const n=PROJECTS.filter(inDate).length; $("#dateCount").textContent=(range.from||range.to)?`${plural(n,"match")}`.replace("matchs","matches"):`${plural(n,"project")} in total`; }
+
+function setRange(kind){
+  document.querySelectorAll("[data-range]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.range===kind));
+  if(kind==="all") range={from:"",to:""};
+  else if(kind==="month") range={from:MONTH+"-01",to:TODAY};
+  else range={from:addDays(TODAY,-(+kind)+1),to:TODAY};
+  $("#dFrom").value=range.from; $("#dTo").value=range.to; refresh();
+}
+document.querySelectorAll("[data-range]").forEach(b=>b.addEventListener("click",()=>setRange(b.dataset.range)));
+["#dFrom","#dTo"].forEach(s=>$(s).addEventListener("change",()=>{range={from:$("#dFrom").value,to:$("#dTo").value};document.querySelectorAll("[data-range]").forEach(b=>b.setAttribute("aria-pressed","false"));refresh();}));
+
+const TABS=["timeline","pages","inventory"];
+function selectTab(id){
+  document.querySelectorAll('[role="tab"]').forEach(t=>t.setAttribute("aria-selected",t.getAttribute("aria-controls")===id));
+  document.querySelectorAll('[role="tabpanel"]').forEach(p=>p.hidden=p.id!==id);
+}
+document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener("click",()=>{const id=t.getAttribute("aria-controls");selectTab(id);try{history.replaceState(null,"","#"+id)}catch(e){}}));
+function route(){const h=location.hash.slice(1); if(TABS.includes(h)){selectTab(h);}}
+addEventListener("hashchange",route,{signal}); route();
+
+$("#jumpMonth").addEventListener("click",()=>{setRange("month");selectTab("timeline");$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
+$("#jumpTodo").addEventListener("click",()=>{selectTab("inventory");$("#fUse").value="Unclassified";renderTable();$(".tabs").scrollIntoView({behavior:reduce?"auto":"smooth"});});
+["#q","#fAI","#fUse","#fCat"].forEach(s=>$(s).addEventListener("input",renderTable));
+$("#unitWork").addEventListener("click",()=>{unit="work";$("#unitWork").setAttribute("aria-pressed","true");$("#unitProj").setAttribute("aria-pressed","false");renderKpis();});
+$("#unitProj").addEventListener("click",()=>{unit="author";$("#unitProj").setAttribute("aria-pressed","true");$("#unitWork").setAttribute("aria-pressed","false");renderKpis();});
+$("#copyCsv").addEventListener("click",()=>{
+  const head=["Project","Author","Category","Features","Audience","AI features","Research / teaching","Link"], q=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const csv=[head.map(q).join(",")].concat(filtered().map(p=>[p.name,p.author,p.cat,p.feature,p.audience.join("; "),p.ai,p.use,p.url].map(q).join(","))).join("\n");
+  const out=$("#csvOut"), btn=$("#copyCsv");
+  const fallback=()=>{out.value=csv;out.hidden=false;out.focus();out.select();btn.textContent="Selected — press Ctrl+C";};
+  try{navigator.clipboard.writeText(csv).then(()=>{btn.textContent="Copied ✓";setTimeout(()=>btn.textContent="Copy as CSV",1800);},fallback);}catch(e){fallback();}
+});
+
+/* ---------- arc nodes ---------- */
+(function arcNodes(){
+  const topics=Object.keys(CATS).slice(0,7), cx=400, cy=420, r=310, NS="http://www.w3.org/2000/svg";
+  const spokes=document.getElementById("spokes"), nodes=document.getElementById("nodes");
+  topics.forEach((label,i)=>{
+    const ang=Math.PI-(Math.PI*(i+0.5)/topics.length), x=cx+r*Math.cos(ang), y=cy-r*Math.sin(ang);
+    const l=document.createElementNS(NS,"line");
+    Object.entries({x1:x,y1:y,x2:400,y2:300,stroke:"#e0507f","stroke-opacity":".45","stroke-width":"1.5",class:"spoke"}).forEach(([k,v])=>l.setAttribute(k,v));
+    l.style.animationDelay=(-i*0.2)+"s"; spokes.appendChild(l);
+    const left=x<cx-20, right=x>cx+20, lx=x+(left?-14:right?14:0), anchor=left?"end":right?"start":"middle", ly=y-(Math.abs(x-cx)<60?24:8);
+    const g=document.createElementNS(NS,"g");
+    g.innerHTML=`<circle class="node-pulse" cx="${x}" cy="${y}" r="7" fill="${CATS[label]}" style="animation-delay:${-i*0.3}s"/>
+      <circle cx="${x}" cy="${y}" r="6" fill="#fff" stroke="${CATS[label]}" stroke-width="3"/>
+      <text x="${lx}" y="${ly-14}" text-anchor="${anchor}" class="arc-code">TRACK ${String.fromCharCode(65+i)}</text>
+      <text x="${lx}" y="${ly}" text-anchor="${anchor}" class="arc-label">${SHORT[label]||label}</text>`;
+    nodes.appendChild(g);
+  });
+})();
+
+/* ---------- DNA → particles → AI → ECG → heart animation ---------- */
+(function band(){
+  const cv=document.getElementById("bandCanvas"), ctx=cv.getContext("2d");
+  let W=0,H=0;
+  function resize(){const dpr=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  resize(); addEventListener("resize",resize,{signal});
+  const colors=["#e0507f","#f8a9c6","#b89ae8","#e3a645","#c06bd8","#ff8fb8"];
+  const parts=[]; for(let i=0;i<70;i++) parts.push({x:Math.random(),y:Math.random(),s:2+Math.random()*5,v:.0006+Math.random()*.0012,c:colors[i%colors.length]});
+  function ecgY(t){ if(t<.10)return 0; if(t<.16)return -.12*Math.sin((t-.10)/.06*Math.PI); if(t<.20)return 0; if(t<.22)return .15; if(t<.26)return -1; if(t<.29)return .45; if(t<.32)return 0; if(t<.46)return -.22*Math.sin((t-.32)/.14*Math.PI); return 0; }
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function heart(x,y,s){ctx.beginPath();ctx.moveTo(x,y+s*.35);ctx.bezierCurveTo(x-s*1.1,y-s*.4,x-s*.45,y-s*1.05,x,y-s*.45);ctx.bezierCurveTo(x+s*.45,y-s*1.05,x+s*1.1,y-s*.4,x,y+s*.35);ctx.closePath();}
+  function draw(ms){
+    if(!W){ resize(); }
+    const t=ms/1000; ctx.clearRect(0,0,W,H);
+    const mid=H/2, amp=H*.28, cs=getComputedStyle(document.documentElement);
+    rr(4,mid-H*.36,W-8,H*.72,H*.36); ctx.fillStyle=cs.getPropertyValue("--capsule").trim()||"rgba(255,255,255,.6)"; ctx.fill(); ctx.strokeStyle="rgba(224,80,127,.25)"; ctx.lineWidth=1; ctx.stroke();
+    const xD0=W*.03, xD1=W*.36, xP1=W*.56, xAI=W*.62, xE1=W*.92, xH=W*.955, k=2*Math.PI/Math.max(90,W*.09);
+    for(let x=xD0+6;x<xD1;x+=Math.max(10,W*.012)){const ph=x*k-t*2.2, f=x>xD1-W*.06?(xD1-x)/(W*.06):1;
+      ctx.strokeStyle=`rgba(184,154,232,${.55*f})`;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,mid+Math.sin(ph)*amp);ctx.lineTo(x,mid-Math.sin(ph)*amp);ctx.stroke();}
+    [[0,"#e0507f"],[Math.PI,"#c06bd8"]].forEach(([off,c])=>{ctx.beginPath();ctx.lineWidth=3.2;ctx.strokeStyle=c;ctx.lineCap="round";
+      for(let x=xD0+6;x<=xD1;x+=2){const y=mid+Math.sin(x*k-t*2.2+off)*amp*(x>xD1-W*.05?(xD1-x)/(W*.05)*.7+.3:1); x===xD0+6?ctx.moveTo(x,y):ctx.lineTo(x,y);} ctx.stroke();});
+    parts.forEach(p=>{ if(!reduce){p.x+=p.v; if(p.x>1){p.x=0;p.y=Math.random();}}
+      const x=xD1-W*.04+p.x*(xAI-xD1-W*.01), y=mid+(p.y-.5)*2*((1-p.x)*amp*1.5+4);
+      ctx.globalAlpha=p.x<.1?p.x*10:p.x>.85?(1-p.x)/.15:1; ctx.fillStyle=p.c; const s=p.s*(1-p.x*.6); ctx.fillRect(x-s/2,y-s/2,s,s);});
+    ctx.globalAlpha=1;
+    const g=ctx.createLinearGradient(xP1,0,xAI,0); g.addColorStop(0,"rgba(224,80,127,0)"); g.addColorStop(1,"rgba(224,80,127,.6)");
+    ctx.strokeStyle=g; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(xP1-W*.04,mid); ctx.lineTo(xAI,mid); ctx.stroke();
+    const sz=Math.min(H*.62,86), pulse=1+(reduce?0:Math.sin(t*3)*.04);
+    ctx.save(); ctx.translate(xAI+sz*.1,mid); ctx.scale(pulse,pulse); ctx.shadowColor="rgba(224,80,127,.6)"; ctx.shadowBlur=24; ctx.fillStyle="#e3a645";
+    for(let i=0;i<4;i++){const o=-sz*.33+i*sz*.22; ctx.fillRect(o-2,-sz/2-8,4,8); ctx.fillRect(o-2,sz/2,4,8); ctx.fillRect(-sz/2-8,o-2,8,4); ctx.fillRect(sz/2,o-2,8,4);}
+    rr(-sz/2,-sz/2,sz,sz,sz*.18); const cg=ctx.createLinearGradient(-sz/2,-sz/2,sz/2,sz/2); cg.addColorStop(0,"#5a1d3e"); cg.addColorStop(1,"#3b1236"); ctx.fillStyle=cg; ctx.fill();
+    ctx.shadowBlur=0; ctx.lineWidth=2.5; ctx.strokeStyle="#f8a9c6"; ctx.stroke();
+    ctx.fillStyle="#ffd1e2"; ctx.font=`800 ${sz*.42}px Fraunces, Georgia, serif`; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("AI",0,sz*.03); ctx.restore();
+    const ex0=xAI+sz*.62+10, period=(xE1-ex0)/2.2, shift=reduce?0:(t*period*1.1)%period;
+    ctx.beginPath(); ctx.lineWidth=3; ctx.strokeStyle="#e0507f"; ctx.shadowColor="rgba(224,80,127,.55)"; ctx.shadowBlur=10; ctx.lineJoin="round";
+    for(let x=ex0;x<=xE1;x+=1.5){const ph=((((x-ex0)-shift)%period)+period)%period/period, y=mid+ecgY(ph)*amp*1.25; x===ex0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke(); ctx.shadowBlur=0;
+    const lastPh=((((xE1-ex0)-shift)%period)+period)%period/period, beat=reduce?0:Math.max(0,1-Math.abs(lastPh-.25)*8), hs=Math.min(H*.26,30)*(1+beat*.22);
+    ctx.save(); ctx.shadowColor="rgba(224,80,127,.7)"; ctx.shadowBlur=14+beat*16; heart(xH,mid+hs*.2,hs);
+    const hg=ctx.createLinearGradient(xH,mid-hs,xH,mid+hs); hg.addColorStop(0,"#ff7aa8"); hg.addColorStop(1,"#d22f68"); ctx.fillStyle=hg; ctx.fill(); ctx.restore();
+    if(!reduce && !signal.aborted) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  $("#collapseBtn").addEventListener("click",()=>{ if(!$("#dashBody").hidden){ resize(); if(reduce) requestAnimationFrame(draw);} });
+})();
+
+window.__TMUN={P:PROJECTS,CATS};
+renderKpis(); renderCoverage(); renderCats(); refresh();
+
+}
+
+/* ============================================================
+   後台數據分析 / Admin analytics
+   目前的分析數字為「示意數據」，由作品資料依固定種子產生。
+   接上真正的分析服務後，把 metrics() 換成真實資料即可。
+   ============================================================ */
+const ADMIN_TXT = {
+  zh:{
+    eyebrow:"TMUN.AI · 後台", title:"後台數據分析", period:"統計期間：近 30 天（2026-10-24 至 11-22）・ 僅限管理員",
+    back:"← 返回前台", sample:"示意數據",
+    note:"以下數字是依目前作品資料產生的<b>示意數據</b>，用來呈現後台版面。要收集真實數據，網站需要接上分析服務（例如 Google Analytics 4 或 Plausible）。最下方「本瀏覽器即時紀錄」是真實的，會記錄你在這個瀏覽器中點過的按鈕。",
+    k:["總曝光次數","總點擊（瀏覽）","平均點擊率","平均閱覽率","平均停留時間","平均互動率"],
+    ks:["作品卡片出現在畫面中的次數","點進作品頁面的次數","點擊 ÷ 曝光","讀到頁面 75% 以上的比例","每次瀏覽的平均時間","有互動的瀏覽 ÷ 總瀏覽"],
+    trend:"近 30 天瀏覽趨勢", trendD:"每日點擊（瀏覽）次數；虛線為 7 日平均。",
+    t1:"常見點擊率分析", d1:"點擊率 = 點擊 ÷ 曝光。黑色細線為全站平均。列出點擊率最高的 8 件作品。",
+    t2:"閱覽率分析", d2:"閱覽率 = 讀到頁面 75% 以上的瀏覽比例。綠色 ≥ 70%，黃色 < 50% 建議改善。",
+    t3:"停留畫面分析", d3:"訪客在各區塊的平均停留秒數，以及有多少比例的訪客捲動到該區塊。",
+    t4:"高興趣項目分析", d4:"綜合點擊率、停留時間、互動率與閱覽率計算興趣分數（滿分 100）。",
+    t5:"互動率分析", d5:"每 100 次工作階段中，各類互動發生的次數；下方為各主題分類的互動率。",
+    t6:"互動 ID 分析", d6:"依頁面元素 ID 統計互動次數，可找出最常被使用與很少被使用的功能。點欄位標題可排序。",
+    reach:"到達率", sec:"秒", perSess:"次 / 百次工作階段",
+    why:{ctr:"高點擊",dwell:"長停留",ir:"高互動",read:"高閱覽"}, score:"分數",
+    secs:[["動態 AI 主視覺"],["統計卡與涵蓋率"],["Timeline"],["所有公開頁面"],["全站功能盤點表"],["平台介紹"],["AI 與技術功能"],["Store 技能"]],
+    types:["作品連結點擊","分頁切換","搜尋","篩選（分類／AI／用途）","日期篩選","選單","語言切換","深色模式","複製 CSV"],
+    catIR:"各分類互動率",
+    cols:["元素 ID","說明","互動次數","不重複工作階段","占比"],
+    ids:{"a.project-link":"作品連結","#tab-pages":"切換到「所有公開頁面」","#tab-inventory":"切換到盤點表","#q":"搜尋框","#tab-timeline":"切換到 Timeline","[data-range=month]":"日期：本月","#fCat":"分類篩選","#menuBtn":"選單按鈕","#fAI":"AI 功能篩選","#langBtn":"中／英切換","#fUse":"用途篩選","#themeBtn":"深色模式切換","#copyCsv":"複製為 CSV","#collapseBtn":"收合儀表板","[data-range=7]":"日期：近 7 天","#jumpTodo":"篩選待分類","#jumpMonth":"只看本月新作品","[data-cat]":"主視覺分類標籤"},
+    recent:"最近互動紀錄（示意）", rcols:["時間","工作階段 ID","元素 ID","頁面"],
+    live:"本瀏覽器即時紀錄（真實）", liveEmpty:"還沒有紀錄。回到前台點幾個按鈕，再回來這裡就會看到。", liveClear:"清除紀錄",
+    sessions:"工作階段", views:"次", page:{timeline:"Timeline",pages:"所有公開頁面",inventory:"盤點表"},
+    enter:"進入後台（示意）"
+  },
+  en:{
+    eyebrow:"TMUN.AI · ADMIN", title:"Admin Analytics", period:"Period: last 30 days (2026-10-24 to 11-22) · Admins only",
+    back:"← Back to site", sample:"Sample data",
+    note:"These figures are <b>sample data</b> generated from the current project list to show the admin layout. To collect real data, the site needs an analytics service such as Google Analytics 4 or Plausible. The “This browser, live” panel at the bottom is real: it records the buttons you click in this browser.",
+    k:["Impressions","Clicks (views)","Avg. click-through rate","Avg. read rate","Avg. time on page","Avg. interaction rate"],
+    ks:["Times a project card was on screen","Times a project page was opened","Clicks ÷ impressions","Share of views reaching 75% of the page","Average time per view","Views with an interaction ÷ all views"],
+    trend:"Views, last 30 days", trendD:"Daily clicks (views); the dashed line is the 7-day average.",
+    t1:"Click-through rate", d1:"CTR = clicks ÷ impressions. The thin dark line marks the site average. Top 8 projects by CTR.",
+    t2:"Read rate", d2:"Read rate = share of views that reach 75% of the page. Green ≥ 70%; amber < 50% needs attention.",
+    t3:"Time on screen", d3:"Average seconds spent in each section, and the share of visitors who scroll that far.",
+    t4:"High-interest projects", d4:"Interest score (out of 100) combines CTR, time on page, interaction rate and read rate.",
+    t5:"Interaction rate", d5:"Interactions of each type per 100 sessions; below, interaction rate by category.",
+    t6:"Interaction IDs", d6:"Interactions counted by page element ID, showing which features are used most and least. Click a column header to sort.",
+    reach:"reach", sec:"s", perSess:"per 100 sessions",
+    why:{ctr:"High CTR",dwell:"Long stay",ir:"High interaction",read:"High read rate"}, score:"score",
+    secs:[["Animated AI hero"],["Metrics & coverage"],["Timeline"],["All public pages"],["Feature inventory"],["About"],["AI & tech features"],["Store skills"]],
+    types:["Project link clicks","Tab switches","Search","Filters (category / AI / purpose)","Date filter","Menu","Language switch","Dark mode","Copy CSV"],
+    catIR:"Interaction rate by category",
+    cols:["Element ID","What it is","Interactions","Unique sessions","Share"],
+    ids:{"a.project-link":"Project links","#tab-pages":"Open “All public pages”","#tab-inventory":"Open inventory","#q":"Search box","#tab-timeline":"Open Timeline","[data-range=month]":"Date: this month","#fCat":"Category filter","#menuBtn":"Menu button","#fAI":"AI filter","#langBtn":"Language switch","#fUse":"Purpose filter","#themeBtn":"Dark mode toggle","#copyCsv":"Copy as CSV","#collapseBtn":"Collapse dashboard","[data-range=7]":"Date: last 7 days","#jumpTodo":"Filter unclassified","#jumpMonth":"Show this month","[data-cat]":"Hero category tags"},
+    recent:"Recent interactions (sample)", rcols:["Time","Session ID","Element ID","Page"],
+    live:"This browser, live (real)", liveEmpty:"Nothing recorded yet. Go back to the site, click a few buttons, then come back here.", liveClear:"Clear",
+    sessions:"sessions", views:"views", page:{timeline:"Timeline",pages:"All public pages",inventory:"Inventory"},
+    enter:"Open admin (demo)"
+  }
+};
+
+/* 真實的本機互動紀錄 */
+const TRACK=(function(){
+  let m={}; try{m=JSON.parse(localStorage.getItem("tmun-track")||"{}")||{}}catch(e){}
+  return {get m(){return m}, add(k){m[k]=(m[k]||0)+1; try{localStorage.setItem("tmun-track",JSON.stringify(m))}catch(e){}}, clear(){m={}; try{localStorage.removeItem("tmun-track")}catch(e){}}};
+})();
+document.addEventListener("click",e=>{
+  const el=e.target.closest("button,a,input,select,[role=tab]");
+  if(!el || el.closest("#adminView") || el.closest("#signinBox")) return;
+  let k = el.id ? "#"+el.id : el.dataset.range ? `[data-range=${el.dataset.range}]` : el.dataset.cat ? "[data-cat]" : el.closest("td,.card,.tl") ? "a.project-link" : el.tagName==="A" ? "a[href]" : null;
+  if(k) TRACK.add(k);
+}, true);
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function adminMetrics(P){
+  const r=mulberry32(20261122);
+  const rows=P.map((p,i)=>{const ai=p.ai==="有"||p.ai==="Yes";
+    const imp=Math.round(p.views*(2.6+r()*4.2)), read=Math.min(92,Math.round(36+r()*44+(ai?6:0))),
+      dwell=Math.round(40+r()*150+(ai?55:0)), inter=Math.min(p.views,Math.round(p.views*(0.08+r()*0.42+(ai?0.12:0))));
+    return {p,i,ai,imp,clicks:p.views,ctr:p.views/imp,read,dwell,inter,ir:inter/p.views};});
+  const mx=k=>Math.max(...rows.map(x=>x[k]));
+  const M={ctr:mx("ctr"),dwell:mx("dwell"),ir:mx("ir"),read:mx("read")};
+  rows.forEach(x=>{x.score=Math.round(100*(.3*x.ctr/M.ctr+.25*x.dwell/M.dwell+.3*x.ir/M.ir+.15*x.read/M.read));
+    x.why=["ctr","dwell","ir","read"].filter(k=>x[k]/M[k]>=.8);});
+  return rows;
+}
+const fmtS=s=>`${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
+const pct=(v,d=1)=>(v*100).toFixed(d)+"%";
+const nf=n=>n.toLocaleString("en-US");
+const escA=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function hbars(items,max,opts={}){
+  return items.map(it=>`<div class="hb"><span class="l">${escA(it.l)}</span><span class="t"><i class="${it.cls||opts.cls||""}" style="width:${Math.max(1.5,it.v/max*100)}%"></i>${opts.avg!=null?`<span class="avg" style="left:${opts.avg/max*100}%"></span>`:""}</span><span class="v">${it.vt}${it.sub?`<small>${it.sub}</small>`:""}</span></div>`).join("");
+}
+function trendSVG(total,T){
+  const r=mulberry32(77), days=30, base=total/38, pts=[];
+  for(let d=0;d<days;d++){const dt=new Date("2026-10-24T00:00:00");dt.setDate(dt.getDate()+d);
+    const wk=[.72,1.05,1.12,1.08,1.02,.95,.68][dt.getDay()], grow=.8+d/days*.45;
+    pts.push({d:dt.toISOString().slice(5,10),v:Math.round(base*wk*grow*(.85+r()*.3))});}
+  const avg=pts.map((p,i)=>{const s=pts.slice(Math.max(0,i-6),i+1);return s.reduce((a,b)=>a+b.v,0)/s.length;});
+  const W=720,H=220,L=44,R=46,Tp=14,B=28, maxV=Math.ceil(Math.max(...pts.map(p=>p.v))/40)*40;
+  const x=i=>L+i*(W-L-R)/(days-1), y=v=>Tp+(1-v/maxV)*(H-Tp-B);
+  const ticks=[0,maxV/4,maxV/2,maxV*3/4,maxV];
+  const line=pts.map((p,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join("");
+  const area=line+`L${x(days-1)},${y(0)}L${x(0)},${y(0)}Z`;
+  const ln2=avg.map((v,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  const last=pts[days-1];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${escA(T.trend)}">
+    <g class="grid">${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-8}" y="${y(t)+3}" text-anchor="end">${nf(t)}</text>`).join("")}</g>
+    ${[0,7,14,21,29].map(i=>`<text class="ax" x="${x(i)}" y="${H-8}" text-anchor="middle">${pts[i].d}</text>`).join("")}
+    <path class="area" d="${area}"/><path class="ln2" d="${ln2}"/><path class="ln" d="${line}"/>
+    <circle class="end" cx="${x(days-1)}" cy="${y(last.v)}" r="5"/><text class="endlbl" x="${x(days-1)+8}" y="${y(last.v)+4}">${last.v}</text></svg>`;
+}
+
+function renderAdmin(lang){
+  const T=ADMIN_TXT[lang], D=window.__TMUN, av=document.getElementById("adminView"); if(!D||!av) return;
+  const rows=adminMetrics(D.P);
+  const sum=k=>rows.reduce((a,x)=>a+x[k],0);
+  const imp=sum("imp"), clicks=sum("clicks"), inter=sum("inter");
+  const avgCtr=clicks/imp, avgRead=rows.reduce((a,x)=>a+x.read*x.clicks,0)/clicks/100, avgDwell=rows.reduce((a,x)=>a+x.dwell*x.clicks,0)/clicks, avgIR=inter/clicks;
+  const sessions=Math.round(clicks*.62);
+  /* 1 CTR */
+  const byCtr=[...rows].sort((a,b)=>b.ctr-a.ctr).slice(0,8);
+  const ctrMax=Math.ceil(byCtr[0].ctr*20)/20;
+  /* 2 read */
+  const byRead=[...rows].sort((a,b)=>b.read-a.read);
+  /* 3 sections */
+  const secData=[[22,100],[31,88],[48,74],[63,61],[95,47],[27,33],[19,28],[24,21]];
+  /* 5 types */
+  const typeData=[[77.4],[71.2],[24.5],[31.6],[19.8],[12.1],[9.6],[6.9],[5.5]];
+  const cats=Object.keys(D.CATS).map(c=>{const rs=rows.filter(x=>x.p.cat===c);const v=rs.reduce((a,x)=>a+x.clicks,0);return {c,ir:rs.reduce((a,x)=>a+x.inter,0)/(v||1)};}).sort((a,b)=>b.ir-a.ir);
+  /* 6 ids */
+  const idCounts=[["a.project-link",2214,1170],["#tab-pages",1284,812],["#tab-inventory",967,655],["#q",702,498],["#tab-timeline",541,402],["[data-range=month]",433,351],["#fCat",388,290],["#menuBtn",345,290],["#fAI",301,247],["#langBtn",274,233],["#fUse",214,180],["#themeBtn",198,170],["#copyCsv",156,121],["#collapseBtn",122,101],["[data-range=7]",118,96],["#jumpTodo",64,52],["#jumpMonth",58,49],["[data-cat]",41,37]];
+  const idTotal=idCounts.reduce((a,x)=>a+x[1],0);
+  const rr=mulberry32(5), pages=["timeline","pages","inventory"];
+  const recent=Array.from({length:8},(_,i)=>{const id=idCounts[Math.floor(rr()*10)][0];return [`11-22 ${String(14-Math.floor(i/3)).padStart(2,"0")}:${String(58-i*7).padStart(2,"0")}`,"S-"+Math.floor(4096+rr()*61439).toString(16).toUpperCase(),id,T.page[pages[Math.floor(rr()*3)]]];});
+
+  av.innerHTML=`
+  <div class="adm-head">
+    <div><div class="eyebrow">${T.eyebrow}</div><h1><span class="en">tmun.ai</span> <span class="zh">${T.title}</span></h1><div class="muted" style="font-size:13px;margin-top:4px">${T.period}</div></div>
+    <div class="adm-actions"><span class="pill"><span class="dot"></span>${T.sample}</span><button class="collapse-btn" type="button" id="admBack">${T.back}</button></div>
+  </div>
+  <div class="adm-note">⚠︎ <span>${T.note}</span></div>
+  <section class="adm-kpis">${[nf(imp),nf(clicks),pct(avgCtr),pct(avgRead),fmtS(avgDwell),pct(avgIR)].map((v,i)=>`<div class="adm-kpi"><div class="k">${T.k[i]}</div><div class="v">${v}</div><div class="s">${T.ks[i]}</div></div>`).join("")}</section>
+  <div class="adm-grid">
+    <section class="pa wide trend"><h3>${T.trend}</h3><p class="desc">${T.trendD}</p>${trendSVG(clicks,T)}</section>
+
+    <section class="pa"><h3><span class="n">01</span>${T.t1}</h3><p class="desc">${T.d1}</p>
+      ${hbars(byCtr.map(x=>({l:x.p.name,v:x.ctr,vt:pct(x.ctr),sub:`${nf(x.clicks)}/${nf(x.imp)}`})),ctrMax,{avg:avgCtr})}
+      <div class="foot">${lang==="zh"?"全站平均點擊率":"Site average CTR"} <b>${pct(avgCtr)}</b></div></section>
+
+    <section class="pa"><h3><span class="n">02</span>${T.t2}</h3><p class="desc">${T.d2}</p>
+      ${hbars(byRead.map(x=>({l:x.p.name,v:x.read,vt:x.read+"%",cls:x.read>=70?"good":x.read<50?"warn":""})),100,{avg:avgRead*100})}</section>
+
+    <section class="pa"><h3><span class="n">03</span>${T.t3}</h3><p class="desc">${T.d3}</p>
+      <div class="legend-s"><span><i style="background:var(--rose)"></i>${lang==="zh"?"平均停留秒數":"Avg. seconds"}</span><span><i style="background:var(--lilac)"></i>${T.reach}</span></div>
+      ${T.secs.map((s,i)=>hbars([{l:s[0],v:secData[i][0],vt:secData[i][0]+T.sec}],100)+hbars([{l:"",v:secData[i][1],vt:secData[i][1]+"%",cls:"lilac"}],100)).join("")}
+      <div class="foot">${lang==="zh"?"停留最久的作品":"Longest time on page"}：${[...rows].sort((a,b)=>b.dwell-a.dwell).slice(0,3).map(x=>`<b>${escA(x.p.name)}</b> ${fmtS(x.dwell)}`).join("・")}</div></section>
+
+    <section class="pa"><h3><span class="n">04</span>${T.t4}</h3><p class="desc">${T.d4}</p>
+      <ol class="interest">${[...rows].sort((a,b)=>b.score-a.score).slice(0,6).map((x,i)=>`<li><span class="rk">${i+1}</span><div><div class="nm">${escA(x.p.name)}</div><div class="no">${escA(x.p.author)} ・ ${escA(x.p.cat)}</div><div class="why">${x.why.map(w=>`<span>${T.why[w]}</span>`).join("")}</div></div><div class="sc">${x.score}<small>${T.score}</small></div></li>`).join("")}</ol></section>
+
+    <section class="pa"><h3><span class="n">05</span>${T.t5}</h3><p class="desc">${T.d5}</p>
+      ${hbars(T.types.map((t,i)=>({l:t,v:typeData[i][0],vt:typeData[i][0].toFixed(1)})),80)}
+      <div class="foot" style="margin-bottom:8px">${T.perSess} ・ ${lang==="zh"?"全站平均互動率":"Site average"} <b>${pct(avgIR)}</b></div>
+      <h4 style="margin:14px 0 8px;font-size:14px">${T.catIR}</h4>
+      ${hbars(cats.map(c=>({l:c.c,v:c.ir,vt:pct(c.ir),cls:"lilac"})),Math.ceil(cats[0].ir*10)/10,{avg:avgIR})}</section>
+
+    <section class="pa wide"><h3><span class="n">06</span>${T.t6}</h3><p class="desc">${T.d6}</p>
+      <div class="adm-table table-scroll"><table id="idTable"><thead><tr>${T.cols.map((c,i)=>`<th class="${i>1?"num":""}"><button type="button" data-sort="${i}">${c} ↕</button></th>`).join("")}</tr></thead><tbody></tbody></table></div>
+      <h4 style="margin:18px 0 8px;font-size:14px">${T.recent}</h4>
+      <div class="adm-table table-scroll"><table><thead><tr>${T.rcols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${recent.map(r=>`<tr><td class="no">${r[0]}</td><td><code>${r[1]}</code></td><td><code>${escA(r[2])}</code></td><td>${escA(r[3])}</td></tr>`).join("")}</tbody></table></div>
+      <div class="live"><h4><span class="dot"></span>${T.live}</h4><div id="liveBox"></div></div>
+    </section>
+  </div>`;
+
+  let sortK=2, sortDir=-1;
+  const paintIds=()=>{const rs=[...idCounts].sort((a,b)=>{const va=sortK===0?a[0]:sortK===1?T.ids[a[0]]:sortK===4?a[1]:a[sortK-1]; const vb=sortK===0?b[0]:sortK===1?T.ids[b[0]]:sortK===4?b[1]:b[sortK-1]; return (va>vb?1:va<vb?-1:0)*sortDir;});
+    av.querySelector("#idTable tbody").innerHTML=rs.map(r=>`<tr><td><code>${escA(r[0])}</code></td><td>${escA(T.ids[r[0]]||"")}</td><td class="num">${nf(r[1])}</td><td class="num">${nf(r[2])}</td><td class="num">${pct(r[1]/idTotal)}</td></tr>`).join("");};
+  paintIds();
+  av.querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{const k=+b.dataset.sort; sortDir = k===sortK ? -sortDir : (k<2?1:-1); sortK=k; paintIds();}));
+  const paintLive=()=>{const e=Object.entries(TRACK.m).sort((a,b)=>b[1]-a[1]);
+    av.querySelector("#liveBox").innerHTML = e.length ? `<ul>${e.map(([k,v])=>`<li>${escA(k)} <b>×${v}</b></li>`).join("")}</ul><button class="btn" type="button" id="liveClear" style="margin-top:10px">${T.liveClear}</button>` : `<div class="empty">${T.liveEmpty}</div>`;
+    const c=av.querySelector("#liveClear"); if(c) c.addEventListener("click",()=>{TRACK.clear();paintLive();});};
+  paintLive();
+  av.querySelector("#admBack").addEventListener("click",()=>{location.hash="timeline";});
+}
+
+(function(){
+  const TITLES={zh:"tmun.ai 已發表專案儀表板",en:"tmun.ai Project Dashboard"};
+  let ctrl=null;
+  const get=()=>{try{return localStorage.getItem("tmun-lang")}catch(e){return null}};
+  const set=v=>{try{localStorage.setItem("tmun-lang",v)}catch(e){}};
+  function mount(lang){
+    if(ctrl) ctrl.abort();
+    ctrl=new AbortController();
+    const app=document.getElementById("app");
+    app.replaceChildren(document.getElementById("tpl-"+lang).content.cloneNode(true));
+    document.documentElement.lang = lang==="en" ? "en" : "zh-Hant";
+    document.title=TITLES[lang];
+    (lang==="en"?initEN:initZH)(ctrl.signal);
+    document.getElementById("langBtn").addEventListener("click",()=>{const next=lang==="en"?"zh":"en"; set(next); mount(next); document.getElementById("langBtn").focus();});
+    const wrap=app.querySelector(".wrap"), av=document.createElement("section");
+    av.id="adminView"; av.hidden=true; av.setAttribute("aria-label", lang==="en"?"Admin analytics":"後台數據分析");
+    wrap.querySelector("header.site").after(av);
+    const setAdmin=on=>{wrap.classList.toggle("admin-mode",on); av.hidden=!on; if(on){renderAdmin(lang); window.scrollTo(0,0);}};
+    document.getElementById("siAdmin").addEventListener("click",()=>{document.getElementById("signinBox").hidden=true; location.hash="admin";});
+    addEventListener("hashchange",()=>setAdmin(location.hash==="#admin"),{signal:ctrl.signal});
+    setAdmin(location.hash==="#admin");
+  }
+  mount(get()==="en"?"en":"zh");
+})();
 </script>
 </body>
 </html>
