@@ -1841,7 +1841,7 @@ function renderTraffic(lang){
   const max=Math.max(1,...bars.map(b=>b.v));
   box.innerHTML=`<div class="tr-head"><h3>${T.title} <span class="tr-tag"><span class="dot"></span>${T.tag}</span></h3><span class="muted">${msg?e(msg):T.sub}</span></div>
     <div class="tr-grid">${T.k.map((k,i)=>`<div class="tr-kpi${i===0?" hot":""}"><div class="k">${k}</div><div class="v">${vals[i]}</div><div class="s">${e(subs[i])}</div></div>`).join("")}</div>
-    ${bars.length?`<div class="tr-chart"><div class="tr-ct">${T.chart}</div>${trafficLine(bars,T.chart)}</div>`:""}`;
+`;
 }
 
 (function(){
