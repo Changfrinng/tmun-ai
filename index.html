@@ -382,6 +382,14 @@ html[lang="en"] h1,html[lang="en"] .hero-copy h2{letter-spacing:-.5px}
 .g-cover em{position:absolute;top:8px;left:8px;font:700 11px var(--font-body);font-style:normal;background:rgba(255,255,255,.9);color:#7a4a10;padding:2px 8px;border-radius:999px}
 .g-card p{margin:0;font-size:13px;color:var(--ink-soft)}
 .g-tools{display:flex;gap:8px;flex-wrap:wrap}
+.g-admin{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px}
+.g-admin #gManage{font-size:12px;padding:6px 12px;opacity:.75}
+.g-admin form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.g-admin input{font:500 14px var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;width:180px;max-width:100%}
+.g-admsg{color:var(--rose-deep);font-weight:500}
+.g-delbtn{border-color:#c2364f;color:#c2364f}
+.g-hid{font-size:12px;font-weight:700;color:var(--warn-fg);background:var(--warn-bg);padding:4px 10px;border-radius:999px}
+.g-is-hidden{opacity:.55;border-style:dashed}
 .g-tools select{font:500 14px var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
 .g-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:6px;padding:8px;border-radius:12px;background:var(--bg-2)}
 .g-stats span{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--ink-soft);text-align:center}
@@ -1633,6 +1641,7 @@ const GAME_TXT = {
     sample:"範例", sampleNote:"目前顯示的是範例遊戲。老師接上 Google 試算表後，這裡會自動顯示學員上傳的遊戲。",
     loading:"正在讀取學員上傳的遊戲…", loadErr:"讀不到試算表，暫時顯示範例遊戲。請確認試算表已「發布到網路」並選擇 CSV 格式。",
     empty:"還沒有人上傳遊戲，成為第一個吧！",
+    mg:{open:"維護（管理者）",key:"管理密碼",enter:"進入維護",exit:"結束維護",del:"刪除",restore:"恢復",hidden:"已刪除（隱藏中）",bad:"密碼不正確。",need:"需要先設定計數器網址，才能使用維護功能。",on:"維護模式：按「刪除」會把遊戲從遊戲牆移除，其他人立刻看不到；按「恢復」可放回來。要永久刪除，請到試算表刪掉那一列。",fail:"操作失敗，請稍後再試。"},
     st:{view:"曝光",play:"遊玩人次",ctr:"點閱率",none:"—"}, sort:{label:"排序",new:"最新上傳",play:"最多人玩",ctr:"點閱率最高"}, statsOff:"遊玩人次與點閱率尚未啟用（老師設定計數器後會自動顯示）。", statsErr:"暫時讀不到遊玩人次與點閱率。", count:n=>`共 ${n} 款遊戲`, nolink:"範例遊戲，尚無連結",
     samples:[["急救 CPR 節奏挑戰","範例學員 A","護理一甲","跟著節拍按壓，練習每分鐘 100–120 下的按壓速度。",""],["給藥五對連連看","範例學員 B","護理二乙","把病人、藥名、劑量、途徑、時間配對正確。",""],["病房逃脫：感染控制","範例學員 C","護理三甲","找出病房中違反感控的地方才能逃出。",""]]},
   en:{kicker:"STUDENT GAMES", title:"Student Game Showcase",
@@ -1644,6 +1653,7 @@ const GAME_TXT = {
     sample:"Sample", sampleNote:"These are sample games. Once the teacher connects the Google Sheet, students' uploaded games appear here automatically.",
     loading:"Loading student games…", loadErr:"Couldn't read the Sheet, so sample games are shown. Make sure the Sheet is published to the web as CSV.",
     empty:"No games uploaded yet. Be the first!",
+    mg:{open:"Maintain (admin)",key:"Admin password",enter:"Start maintaining",exit:"Finish",del:"Delete",restore:"Restore",hidden:"Deleted (hidden)",bad:"Wrong password.",need:"Set up the counter URL first to use maintenance.",on:"Maintenance mode: “Delete” removes a game from the wall for everyone right away; “Restore” puts it back. To delete permanently, remove its row in the Sheet.",fail:"That didn't work. Please try again."},
     st:{view:"Impressions",play:"Plays",ctr:"Click-through",none:"—"}, sort:{label:"Sort",new:"Newest",play:"Most played",ctr:"Highest click-through"}, statsOff:"Play counts and click-through rate are not on yet (they appear once the teacher sets up the counter).", statsErr:"Couldn't load play counts right now.", count:n=>`${n} game${n===1?"":"s"}`, nolink:"Sample game, no link yet",
     samples:[["CPR Rhythm Challenge","Sample student A","Nursing 1A","Press along to the beat to practise 100–120 compressions a minute.",""],["Five Rights Match-up","Sample student B","Nursing 2B","Match the right patient, drug, dose, route and time.",""],["Ward Escape: Infection Control","Sample student C","Nursing 3A","Spot every infection-control mistake on the ward to escape.",""]]}
 };
@@ -1675,19 +1685,24 @@ function renderGames(lang){
       <div class="g-stage" id="gStage" hidden><div class="g-bar"><span id="gName"></span><button class="btn" type="button" id="gClose">${T.close}</button></div><iframe id="gFrame" title="${e(T.tryT)}" sandbox="allow-scripts allow-pointer-lock"></iframe></div></div>
     <div class="g-wallhead"><h3>${T.wall} <span class="muted" id="gCount"></span></h3><div class="g-tools"><select id="gSort" aria-label="${e(T.sort.label)}"><option value="new">${T.sort.new}</option><option value="play">${T.sort.play}</option><option value="ctr">${T.sort.ctr}</option></select><input type="search" id="gSearch" placeholder="${e(T.search)}" aria-label="${e(T.search)}"></div></div>
     <div class="g-note muted" id="gNote"></div>
-    <div class="cards" id="gWall"></div>`;
+    <div class="cards" id="gWall"></div>
+    <div class="g-admin"><button class="btn" type="button" id="gManage">🔒 ${T.mg.open}</button>
+      <form id="gKeyForm" hidden><label for="gKey" class="muted">${T.mg.key}</label><input type="password" id="gKey" autocomplete="current-password"><button class="btn solid" type="submit">${T.mg.enter}</button></form>
+      <span class="g-admsg" id="gAdmMsg" role="status"></span></div>`;
   let games=T.samples.map(s=>({t:s[0],a:s[1],c:s[2],d:s[3],u:s[4],sample:true}));
   let stats=null;
+  let manageKey=null; try{manageKey=sessionStorage.getItem("tmun-admkey")}catch(e){}
+  const isHidden=g=>!!(stats&&g.id&&stats[g.id]&&stats[g.id].hidden);
   const st=g=>{const x=stats&&g.id?stats[g.id]||{view:0,play:0}:null; return x?{view:x.view,play:x.play,ctr:x.view?x.play/x.view:0}:null;};
   const paint=()=>{const q=box.querySelector("#gSearch").value.trim().toLowerCase(), sk=box.querySelector("#gSort").value;
-    const list=games.filter(g=>!q||[g.t,g.a,g.c,g.d].join(" ").toLowerCase().includes(q));
+    const list=games.filter(g=>(manageKey||!isHidden(g))&&(!q||[g.t,g.a,g.c,g.d].join(" ").toLowerCase().includes(q)));
     if(sk!=="new") list.sort((a,b)=>{const A=st(a),B=st(b);return ((B?B[sk]:-1)-(A?A[sk]:-1));});
     box.querySelector("#gCount").textContent="· "+T.count(list.length);
     box.querySelector("#gWall").innerHTML=list.length?list.map((g,i)=>{const u=safeUrl(g.u);const hue=[340,290,165,25,260,200][i%6];
-      return `<article class="card g-card"><div class="g-cover" style="--h:${hue}"><span>${e(g.t.slice(0,2))}</span>${g.sample?`<em>${T.sample}</em>`:""}</div><div class="body"><h4>${e(g.t)}</h4>
+      return `<article class="card g-card${isHidden(g)?" g-is-hidden":""}"><div class="g-cover" style="--h:${hue}"><span>${e(g.t.slice(0,2))}</span>${g.sample?`<em>${T.sample}</em>`:""}</div><div class="body"><h4>${e(g.t)}</h4>
       <div class="by"><span>${T.by} ${e(g.a)}</span>${g.c?`<span class="views">${e(g.c)}</span>`:""}</div>${g.d?`<p>${e(g.d)}</p>`:""}
       ${(()=>{const x=st(g);return `<div class="g-stats"><span><b>${x?nf(x.view):T.st.none}</b>${T.st.view}</span><span><b>${x?nf(x.play):T.st.none}</b>${T.st.play}</span><span><b>${x?(x.ctr*100).toFixed(1)+"%":T.st.none}</b>${T.st.ctr}</span></div>`;})()}
-      <div class="row">${u?`<a class="btn solid g-play" data-gid="${e(g.id||"")}" href="${e(u)}" target="_blank" rel="noopener">${T.play}</a>`:`<span class="muted">${T.nolink}</span>`}</div></div></article>`;}).join(""):`<div class="empty">${T.empty}</div>`;};
+      <div class="row">${u?`<a class="btn solid g-play" data-gid="${e(g.id||"")}" href="${e(u)}" target="_blank" rel="noopener">${T.play}</a>`:`<span class="muted">${T.nolink}</span>`}${manageKey&&g.id?(isHidden(g)?`<span class="g-hid">${T.mg.hidden}</span><button class="btn g-mod" type="button" data-gid="${e(g.id)}" data-act="unhide">${T.mg.restore}</button>`:`<button class="btn g-mod g-delbtn" type="button" data-gid="${e(g.id)}" data-act="hide">${T.mg.del}</button>`):""}</div></div></article>`;}).join(""):`<div class="empty">${T.empty}</div>`;};
   const note=box.querySelector("#gNote");
   note.textContent=T.sampleNote; paint(); if(!safeUrl(GAME_CONFIG.sheetCsvUrl)) loadStats();
   box.querySelector("#gSearch").addEventListener("input",paint);
@@ -1700,6 +1715,19 @@ function renderGames(lang){
     const fresh=ids.filter(id=>!seen[id]); fresh.forEach(id=>seen[id]=1); try{sessionStorage.setItem("tmun-seen",JSON.stringify(seen))}catch(e){}
     const url=statsUrl+(statsUrl.includes("?")?"&":"?")+(fresh.length?"a=view&ids="+encodeURIComponent(fresh.join(",")):"a=get");
     fetch(url).then(r=>{if(!r.ok)throw 0;return r.json();}).then(j=>{stats=j||{};paint();}).catch(()=>{note.textContent=T.statsErr;});};
+  const admMsg=box.querySelector("#gAdmMsg"), keyForm=box.querySelector("#gKeyForm"), mBtn=box.querySelector("#gManage");
+  const sep=()=>statsUrl.includes("?")?"&":"?";
+  const setManage=k=>{manageKey=k; try{k?sessionStorage.setItem("tmun-admkey",k):sessionStorage.removeItem("tmun-admkey")}catch(e){}
+    mBtn.textContent=k?T.mg.exit:"🔒 "+T.mg.open; keyForm.hidden=true; admMsg.textContent=k?T.mg.on:""; paint();};
+  if(manageKey) setManage(manageKey);
+  mBtn.addEventListener("click",()=>{ if(manageKey){setManage(null);return;} if(!statsUrl){admMsg.textContent=T.mg.need;return;} keyForm.hidden=!keyForm.hidden; if(!keyForm.hidden) box.querySelector("#gKey").focus(); });
+  keyForm.addEventListener("submit",ev=>{ev.preventDefault(); const k=box.querySelector("#gKey").value;
+    fetch(statsUrl+sep()+"a=check&key="+encodeURIComponent(k)).then(r=>r.json()).then(j=>{ if(j&&j.ok){box.querySelector("#gKey").value="";setManage(k);} else admMsg.textContent=T.mg.bad; }).catch(()=>admMsg.textContent=T.mg.fail);});
+  box.querySelector("#gWall").addEventListener("click",ev=>{const b=ev.target.closest(".g-mod"); if(!b||!manageKey) return;
+    b.disabled=true;
+    fetch(statsUrl+sep()+"a="+b.dataset.act+"&id="+encodeURIComponent(b.dataset.gid)+"&key="+encodeURIComponent(manageKey)).then(r=>r.json())
+      .then(j=>{ if(j&&j.error==="key"){setManage(null); admMsg.textContent=T.mg.bad; return;} stats=j||stats; paint(); })
+      .catch(()=>{b.disabled=false; admMsg.textContent=T.mg.fail;});});
   box.querySelector("#gWall").addEventListener("click",ev=>{const a=ev.target.closest(".g-play"); if(!a||!statsUrl||!a.dataset.gid) return;
     const id=a.dataset.gid; try{fetch(statsUrl+(statsUrl.includes("?")?"&":"?")+"a=play&id="+encodeURIComponent(id),{mode:"no-cors",keepalive:true});}catch(e){}
     if(stats){stats[id]=stats[id]||{view:1,play:0}; stats[id].play++; paint();}});
